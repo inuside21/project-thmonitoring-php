@@ -173,11 +173,11 @@
                                             <div class=panel-heading style="border-radius: 50px;">
                                                 <div class=panel-title style="padding: 20px;">
                                                     <center>
-                                                        <img src="assets/images/img-temp.png" width="240px" height="240px" />
+                                                        <img src="assets/images/img-temp.png" width="140px" height="140px" />
                                                         <br><br><br><br>
-                                                        <h1 style="font-size: 140px !important;"><span id="cPanelTemp">99.99</span> °c</h1>
-                                                        <br><br><br>
-                                                        <h1 style="font-size: 50px !important;">Temperature</h1>
+                                                        <h1 style="font-size: 100px !important;"><span id="cPanelTemp">99.99</span> °c</h1>
+                                                        <br><br>
+                                                        <h1 style="font-size: 40px !important;">Temperature</h1>
                                                     </center>
                                                 </div>
                                             </div>
@@ -189,11 +189,11 @@
                                             <div class=panel-heading style="border-radius: 50px;">
                                                 <div class=panel-title style="padding: 20px;">
                                                     <center>
-                                                        <img src="assets/images/img-humi.png" width="240px" height="240px" />
+                                                        <img src="assets/images/img-humi.png" width="140px" height="140px" />
                                                         <br><br><br><br>
-                                                        <h1 style="font-size: 140px !important;"><span id="cPanelHumi">99.99</span> %</h1>
-                                                        <br><br><br>
-                                                        <h1 style="font-size: 50px !important;">Humidity</h1>
+                                                        <h1 style="font-size: 100px !important;"><span id="cPanelHumi">99.99</span> %</h1>
+                                                        <br><br>
+                                                        <h1 style="font-size: 40px !important;">Humidity</h1>
                                                     </center>
                                                 </div>
                                             </div>
