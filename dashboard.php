@@ -2,8 +2,6 @@
 
     // Database
     include("config/config.php");
-
-    $thisDeviceId = "0";
 ?>
 
 <!DOCTYPE html>
@@ -283,7 +281,7 @@
                     type: "POST",
                     url: "server/api.php?mode=devview",
                     data: {
-                        "did": <?php echo $thisDeviceId; ?>,
+                        "did": <?php echo $myDeviceId; ?>,
                     },
                     success: function(data) {
                         // result

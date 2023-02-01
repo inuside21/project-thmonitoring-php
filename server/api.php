@@ -9,6 +9,9 @@
         exit();
     }
 
+    // NOTE: CHANGE THIS BASE ON "id" column OF DEVICE TABLE
+    // NOTE: HOST DONT HAVE THIS.
+    $myDeviceId = "0";
 
 
     /*
@@ -77,8 +80,76 @@
         JSONSet("error", "Device Error", "Id invalid" . $_POST['did']);
     }
 
+    // Update Device (Monitoring)
+    // ----------------------
+    if ($_GET['mode'] == 'dupdate')
+    {
+        $resData = JSONGet();
 
+        $getVal = $_GET['dval'];
+        $getTemp = explode(',', $getVal)[0];
+        $getHumi = explode(',', $getVal)[1];
 
+        // device
+        $sql="  update device_tbl set 
+                    dev_lastupdate = '" . strtotime($dateResult) . "',
+                    dev_temp = '" . $getTemp . "',
+                    dev_humi = '" . $getHumi . "'
+                where id = '" . $myDeviceId . "'
+            "; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
+        // log
+        $sql="  insert into data_tbl 
+                    (
+                        data_date,
+                        data_device,
+                        data_temp,
+                        data_humi
+                    )
+                values
+                    (
+                        '" . $dateResult . "',
+                        '" . $myDeviceId . "',
+                        '" . $getTemp . "',
+                        '" . $getHumi . "'
+                    )
+            "; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
+        echo $myDeviceId;
+    }
+
+    // Update Device (Monitoring Host)
+    // ----------------------
+    if ($_GET['mode'] == 'dupdatehost')
+    {
+        $resData = JSONGet();
+
+        $getVal = $_GET['dval'];
+        $getTemp = explode(',', $getVal)[0];
+        $getHumi = explode(',', $getVal)[1];
+
+        $getId = $_GET['did'];
+
+        // log
+        $sql="  insert into data_tbl 
+                    (
+                        data_date,
+                        data_device,
+                        data_temp,
+                        data_humi
+                    )
+                values
+                    (
+                        '" . $dateResult . "',
+                        '" . $getId . "',
+                        '" . $getTemp . "',
+                        '" . $getHumi . "'
+                    )
+            "; 
+        $rsgetacc=mysqli_query($connection,$sql);
+    }
     
     
 
