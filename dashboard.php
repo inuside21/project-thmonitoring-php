@@ -265,6 +265,7 @@
             // Load DUT Data
             setInterval(() => {
                 LoadDevice();
+                LoadDeviceHosting();
             }, 1000);
 
 
@@ -292,6 +293,37 @@
                         {
                             deviceData = result.data;
                             LoadDisplay();
+                        }
+                        else
+                        {
+                            console.log("Error." . result.message);
+                        }
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            }
+
+            function LoadDeviceHosting()
+            {
+                $.ajax({
+                    type: "POST",
+                    url: "https://martorenzo.click/project/th/server/api.php?mode=devview",
+                    data: {
+                        "did": <?php echo $myDeviceId; ?>,
+                    },
+                    success: function(data) {
+                        // result
+                        const result = JSON.parse(data);
+
+                        // check
+                        if (result.status == "ok")
+                        {
+                            //deviceData = result.data;
+                            //LoadDisplay();
+
+                            $("#cPanelName").text(result.data?.dev_name)
                         }
                         else
                         {
