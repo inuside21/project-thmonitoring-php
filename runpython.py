@@ -7,9 +7,8 @@ from time import sleep
 
 if len(sys.argv) > 1:
   output = sys.argv[1]
-  outputIndex = sys.argv[2]
 else:
   output = "no argument found"
-  outputIndex = "no argument found"
 
-print("python: " + output + " " + outputIndex)
+with open('readme.txt', 'w') as f:
+  f.write(output)

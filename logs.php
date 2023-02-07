@@ -168,62 +168,66 @@
 
                         <div class=row>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                
+
+                                <div class="panel panel-bd">
+                                    <div class="panel-heading">
+                                        <div class="panel-title">
+                                            <h4>Device Logs</h4>
+                                        </div>
+                                        <div class=n2Status>
+                                            <br><br>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Temperature</th>
+                                                        <th>Humidity</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <div class=row>
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class=row>
 
                                     <div class="col-lg-6">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px;">
-                                            <div class=panel-heading style="border-radius: 50px;">
-                                                <div class=panel-title style="padding: 20px;">
-                                                    <center>
-                                                        <img src="assets/images/img-temp.png" width="140px" height="140px" />
-                                                        <br><br><br><br>
-                                                        <h1 style="font-size: 100px !important;"><span id="cPanelTemp">99.99</span> °c</h1>
-                                                        <br><br>
-                                                        <h1 style="font-size: 40px !important;">Temperature</h1>
-                                                    </center>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px;">
-                                            <div class=panel-heading style="border-radius: 50px;">
-                                                <div class=panel-title style="padding: 20px;">
-                                                    <center>
-                                                        <img src="assets/images/img-humi.png" width="140px" height="140px" />
-                                                        <br><br><br><br>
-                                                        <h1 style="font-size: 100px !important;"><span id="cPanelHumi">99.99</span> %</h1>
-                                                        <br><br>
-                                                        <h1 style="font-size: 40px !important;">Humidity</h1>
-                                                    </center>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
                                         <div id="cPanel" class="panel panel-bd" style="border-radius: 50px; height: 150px;">
                                             <div class=panel-heading style="border-radius: 50px; height: 150px;">
                                                 <div class=panel-title style="padding: 20px;">
-                                                    <center>
-                                                        <h1 style="font-size: 60px !important;"><span id="cPanelName">Test Device</span></h1>
-                                                        <br><br>
-                                                        <h1 style="font-size: 40px !important;">Device Name</h1>
-                                                    </center>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px; height: 150px;">
-                                            <div class=panel-heading style="border-radius: 50px; height: 150px;">
-                                                <div class=panel-title style="padding: 20px;">
-                                                    <a href="logs.php">
+                                                    <a href="images.php">
                                                         <center>
                                                             <br>
-                                                            <h1 style="font-size: 60px !important;"><span id="">View Logs</span></h1>
+                                                            <h1 style="font-size: 60px !important;"><span id="">View Image</span></h1>
+                                                        </center>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px; height: 150px;">
+                                            <div class=panel-heading style="border-radius: 50px; height: 150px;">
+                                                <div class=panel-title style="padding: 20px;">
+                                                    <a href="dashboard.php">
+                                                        <center>
+                                                            <br>
+                                                            <h1 style="font-size: 60px !important;"><span id="">View Dashboard</span></h1>
                                                         </center>
                                                     </a>
                                                 </div>
@@ -355,6 +359,31 @@
                 });
                 $('#datenow').text(time.toLocaleString());
             }
+
+            // Load Table
+            $("#dataTableExample1").DataTable({
+                ordering: "false",
+                "bSort": false,
+                "aaSorting": [],
+                "searching": false,
+                pageLength : 5,
+                lengthMenu: [[5, 10, 20], [5, 10, 20]],
+                ajax: {
+                    url: 'server/api.php?mode=devviewlogs&did=<?php echo $myDeviceId; ?>',
+                    dataSrc: 'data',
+                },
+                columns: [
+                    { 
+                        data: 'data_date'
+                    },
+                    { 
+                        data: 'data_temp'
+                    },
+                    { 
+                        data: 'data_humi'
+                    }
+                ]
+            });
         </script>
     </body>
 </html>

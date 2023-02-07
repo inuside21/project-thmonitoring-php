@@ -80,6 +80,48 @@
         JSONSet("error", "Device Error", "Id invalid" . $_POST['did']);
     }
 
+    // View Device Logs
+    // ----------------------
+    if ($_GET['mode'] == 'devviewlogs')
+    {
+        $resData = JSONGet();
+
+        // set 
+        $resList = array();
+
+        // login
+        $sql="select * FROM data_tbl where data_device = '" . $_GET['did'] . "' order by id desc"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $resList[] = $rowsgetacc;
+        }
+
+        // result
+        JSONSet("ok", "", "", $resList);
+    }
+
+    // View Device Image
+    // ----------------------
+    if ($_GET['mode'] == 'devviewimg')
+    {
+        $resData = JSONGet();
+
+        // set 
+        $resList = array();
+
+        // login
+        $sql="select * FROM img_tbl order by id desc"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $resList[] = $rowsgetacc;
+        }
+
+        // result
+        JSONSet("ok", "", "", $resList);
+    }
+
     // Update Device (Monitoring)
     // ----------------------
     if ($_GET['mode'] == 'dupdate')
@@ -89,12 +131,38 @@
         $getVal = $_GET['dval'];
         $getTemp = explode(',', $getVal)[0];
         $getHumi = explode(',', $getVal)[1];
+        $getUltrasonic = explode(',', $getVal)[2];
+        $output = "";
+
+        // ultrasonic
+        if ((int)$getUltrasonic < 50 && (int)$getUltrasonic != 0)
+        {
+            $newName = GUID() . ".jpg";
+
+            // $output = passthru("python3 /var/www/html/thserver/runpython.py " . $getUltrasonic);
+            $output = passthru("sudo fswebcam -d /dev/video5 " . $newName);
+
+            // save
+            $sql="  insert into img_tbl 
+                        (
+                            img_date,
+                            img_name
+                        )
+                    values
+                        (
+                            '" . $dateResult . "',
+                            '" . $newName . "'
+                        )
+                "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
 
         // device
         $sql="  update device_tbl set 
                     dev_lastupdate = '" . strtotime($dateResult) . "',
                     dev_temp = '" . $getTemp . "',
-                    dev_humi = '" . $getHumi . "'
+                    dev_humi = '" . $getHumi . "',
+                    dev_cmd = '" . $output . "'
                 where id = '" . $myDeviceId . "'
             "; 
         $rsgetacc=mysqli_query($connection,$sql);
@@ -117,7 +185,15 @@
             "; 
         $rsgetacc=mysqli_query($connection,$sql);
 
-        echo $myDeviceId;
+        /*
+        // ultrasonic
+        if ((int)$getUltrasonic < 100)
+        {
+            $output = passthru("python3 /var/www/html/thserver/runpython.py " . $getUltrasonic);
+        }
+        */
+
+        echo $myDeviceId . "," . $getUltrasonic;
     }
 
     // Update Device (Monitoring Host)

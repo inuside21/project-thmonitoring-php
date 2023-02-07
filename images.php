@@ -167,56 +167,33 @@
                     <div class=content>
 
                         <div class=row>
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                
+
+                                <div class="panel panel-bd">
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                                                <thead>
+                                                    <tr style="display: none;">
+                                                        <th>Image</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                                 <div class=row>
 
-                                    <div class="col-lg-6">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px;">
-                                            <div class=panel-heading style="border-radius: 50px;">
-                                                <div class=panel-title style="padding: 20px;">
-                                                    <center>
-                                                        <img src="assets/images/img-temp.png" width="140px" height="140px" />
-                                                        <br><br><br><br>
-                                                        <h1 style="font-size: 100px !important;"><span id="cPanelTemp">99.99</span> °c</h1>
-                                                        <br><br>
-                                                        <h1 style="font-size: 40px !important;">Temperature</h1>
-                                                    </center>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px;">
-                                            <div class=panel-heading style="border-radius: 50px;">
-                                                <div class=panel-title style="padding: 20px;">
-                                                    <center>
-                                                        <img src="assets/images/img-humi.png" width="140px" height="140px" />
-                                                        <br><br><br><br>
-                                                        <h1 style="font-size: 100px !important;"><span id="cPanelHumi">99.99</span> %</h1>
-                                                        <br><br>
-                                                        <h1 style="font-size: 40px !important;">Humidity</h1>
-                                                    </center>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px; height: 150px;">
-                                            <div class=panel-heading style="border-radius: 50px; height: 150px;">
-                                                <div class=panel-title style="padding: 20px;">
-                                                    <center>
-                                                        <h1 style="font-size: 60px !important;"><span id="cPanelName">Test Device</span></h1>
-                                                        <br><br>
-                                                        <h1 style="font-size: 40px !important;">Device Name</h1>
-                                                    </center>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-12">
                                         <div id="cPanel" class="panel panel-bd" style="border-radius: 50px; height: 150px;">
                                             <div class=panel-heading style="border-radius: 50px; height: 150px;">
                                                 <div class=panel-title style="padding: 20px;">
@@ -224,6 +201,21 @@
                                                         <center>
                                                             <br>
                                                             <h1 style="font-size: 60px !important;"><span id="">View Logs</span></h1>
+                                                        </center>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px; height: 150px;">
+                                            <div class=panel-heading style="border-radius: 50px; height: 150px;">
+                                                <div class=panel-title style="padding: 20px;">
+                                                    <a href="dashboard.php">
+                                                        <center>
+                                                            <br>
+                                                            <h1 style="font-size: 60px !important;"><span id="">View Dashboard</span></h1>
                                                         </center>
                                                     </a>
                                                 </div>
@@ -355,6 +347,29 @@
                 });
                 $('#datenow').text(time.toLocaleString());
             }
+
+            // Load Table
+            $("#dataTableExample1").DataTable({
+                ordering: "false",
+                "bSort": false,
+                "aaSorting": [],
+                "searching": false,
+                pageLength : 1,
+                lengthMenu: [[1], [1]],
+                "dom": 'rtip',
+                ajax: {
+                    url: 'server/api.php?mode=devviewimg&did=<?php echo $myDeviceId; ?>',
+                    dataSrc: 'data',
+                },
+                columns: [
+                    { 
+                        data: null, 
+                        render: function ( data, type, row, meta ) {
+                            return '<center><img src="server/' + data.img_name + '" height=400px width=400px><br><B>' + data.img_date + '</B></center>';
+                        } 
+                    }
+                ]
+            });
         </script>
     </body>
 </html>

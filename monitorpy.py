@@ -13,16 +13,16 @@ while True :
     x.replace('\\r', '')
     x.strip()
     if (x != "") :
+      # main device
       target_url = "http://localhost/thserver/server/api.php?mode=dupdate&dval=" + x
       request = urllib.request.Request(target_url)
       response = urllib.request.urlopen(request)
-      deviceId = response.read().decode('utf-8')
+      deviceId = response.read().decode('utf-8').split(',')
 
-      print(deviceId)
-
-      target_url = "https://martorenzo.click/project/th/server/api.php?mode=dupdatehost&did=" + deviceId + "&dval=" + x
+      # update hosting
+      target_url = "https://martorenzo.click/project/th/server/api.php?mode=dupdatehost&did=" + deviceId[0] + "&dval=" + x
       print(target_url)
       request = urllib.request.Request(target_url)
-      response = urllib.request.urlopen(request)
+      response = urllib.request.urlopen(request)        
   except :
     print("Error reading...")
