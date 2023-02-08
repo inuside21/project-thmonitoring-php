@@ -1,7 +1,11 @@
 <?php
 
     // Database
+    require_once 'twilio-php-main/src/Twilio/autoload.php'; 
     include("../config/config.php");
+
+    // SMS
+    use \Twilio\Rest\Client; 
 
     // check
     if (!isset($_GET['mode'])) {
@@ -267,7 +271,7 @@
         {
             // email
             {
-                if ((float)$rowsgetacc->dev_tar_temp >= (float)$getTemp || (float)$rowsgetacc->dev_tar_humi >= (float)$getHumi)
+                if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
                 {
                     $to = "martinmexico3@gmail.com";
                     $subject = "Web-Based Monitoring System";
@@ -277,8 +281,8 @@
                                 
                                 Values Set: <br><br>
                                 
-                                Temperature: " . $rowsgetacc->dev_tar_temp . " <br>
-                                Humidity: " . $rowsgetacc->dev_tar_humi . " <br><br>
+                                Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_max . " Min <br>
+                                Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
                                 
                                 Date and Time: " . $dateResult . " <br>
                                 Actual Room Temperature: " . $getTemp . "<br>
@@ -296,11 +300,17 @@
             }
 
             // sms
-            
+            $sid    = "ACc43025dca93136cccc27e2cc202622d0"; 
+            $token  = "7f4aa7a8bcd5b5f2ced4de50aadd51a2"; 
+            $twilio = new Client($sid, $token); 
+            $message = $twilio->messages 
+                            ->create("+639614335484", // to 
+                                    array(  
+                                        "messagingServiceSid" => "MG6e57bd22bb3e892c6448cdc08cb5d61a",      
+                                        "body" => "hello world" 
+                                    )  
+                                ); 
         }
-
-
-        
     }
     
     

@@ -163,17 +163,17 @@
                                 ?>
 
                                     <div class="col-lg-3">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px;">
+                                        <div id="cPanelDev<?php echo $deviceData->id; ?>" class="panel panel-bd" style="border-radius: 50px;">
                                             <div class=panel-heading style="border-radius: 50px;">
                                                 <div class=panel-title style="padding: 20px;">
                                                     <a href="adminroomview.php?id=<?php echo $deviceData->id; ?>">
                                                     <center>
                                                         <img src="assets/images/cabinet/img-device.png" width="75px" height="75px" /> <br>
-                                                        <h1 style="font-size: 21px !important;"><span id="cPanelTemp"><?php echo $deviceData->dev_name; ?></span></h1>
+                                                        <h1 style="font-size: 21px !important;"><span id="cPanelDevName<?php echo $deviceData->id; ?>"><?php echo $deviceData->dev_name; ?></span></h1>
                                                         <br>
-                                                        <h1 style="font-size: 16px !important;">Temperature: <b><span id="x1"><?php echo $deviceData->dev_temp; ?></span> °c</b></h1>
+                                                        <h1 style="font-size: 16px !important;">Temperature: <b><span id="cPanelDevTemp<?php echo $deviceData->id; ?>"><?php echo $deviceData->dev_temp; ?></span> °c</b></h1>
                                                         <br>
-                                                        <h1 style="font-size: 16px !important;">Humidity: <b><span id="x2"><?php echo $deviceData->dev_humi; ?></span> %</b></h1>
+                                                        <h1 style="font-size: 16px !important;">Humidity: <b><span id="cPanelDevHumi<?php echo $deviceData->id; ?>"><?php echo $deviceData->dev_humi; ?></span> %</b></h1>
                                                     </center>
                                                     </a>
                                                 </div>
@@ -211,8 +211,64 @@
             
             // Loop
             // ===========================
-            setInterval({
+            setInterval(function() {
+                // Load Data
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devviewlist",
+                    data: {
+                        "did": "<?php echo $_GET['id']; ?>",
+                    },
+                    success: function(data) {
+                        // result
+                        const result = JSON.parse(data);
 
+                        // check
+                        if (result.status == "ok")
+                        {
+                            // display
+                            for (const item of result.data) 
+                            {
+                                // panel
+                                var check = 0;
+                                if (parseFloat(item.dev_temp_max) > parseFloat(item.dev_temp) && parseFloat(item.dev_temp_min) < parseFloat(item.dev_temp))
+                                {
+                                    check++;
+                                }
+                                if (parseFloat(item.dev_humi_max) > parseFloat(item.dev_humi) && parseFloat(item.dev_humi_min) < parseFloat(item.dev_humi))
+                                {
+                                    check++;
+                                }
+                                if (check >= 2)
+                                {
+                                    $('').removeClass("panel-bd panel-danger panel-success").addClass("panel-success");
+                                }
+                                else
+                                {
+                                    $('').removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
+                                }
+                            }
+                            
+                            /*
+                            
+
+                            // input
+                            $('#rName').val(result.data.dev_name);
+                            $('#rTempHigh').val(result.data.dev_temp_max);
+                            $('#rTempLow').val(result.data.dev_temp_min);
+                            $('#rHumiHigh').val(result.data.dev_humi_max);
+                            $('#rHumiLow').val(result.data.dev_humi_min);
+                            */
+                        }
+                        else
+                        {
+                            window.location.href = "adminroomlist.php";
+                        }
+                    },
+                    error: function(data) {
+                        window.location.href = "adminroomlist.php";
+                    }
+                });
             }, 1000);
 
 
