@@ -247,6 +247,10 @@
                                 {
                                     $('').removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
                                 }
+
+                                $('#rName').val(result.data.dev_name);
+                                $('#rTempHigh').val(result.data.dev_temp_max);
+                                $('#rTempLow').val(result.data.dev_temp_min);
                             }
                             
                             /*

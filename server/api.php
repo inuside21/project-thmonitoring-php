@@ -269,47 +269,70 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            // email
+            $sql="select * FROM user_tbl"; 
+            $rsusr=mysqli_query($connection,$sql);
+            while ($rowsusr = mysqli_fetch_object($rsusr))
             {
-                if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+                // email
                 {
-                    $to = "martinmexico3@gmail.com";
-                    $subject = "Web-Based Monitoring System";
-                    $txt = "
-                                <b>URGENT!</b> <br>
-                                Temperature and Humidity Monitoring System has detected a limit extent on Pharmacy Department. <br><br>
-                                
-                                Values Set: <br><br>
-                                
-                                Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_max . " Min <br>
-                                Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
-                                
-                                Date and Time: " . $dateResult . " <br>
-                                Actual Room Temperature: " . $getTemp . "<br>
-                                Actual Room Humidity: " . $getHumi . " <br><br>
-                                
-                                Click the link for more information: <br>
-                                https://martorenzo.click/project/th <br>
-                                admin@martorenzo.click
-                    ";        
-                    $headers = "MIME-Version: 1.0\r\n";
-                    $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                    $headers .= "From: admin@martorenzo.click";
-                    mail($to,$subject,$txt,$headers);
+                    if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+                    {
+                        $to = $rowsusr->user_email;
+                        $subject = "Web-Based Monitoring System";
+                        $txt = "
+                                    <b>URGENT!</b> <br>
+                                    Temperature and Humidity Monitoring System has detected a limit extent on Pharmacy Department. <br><br>
+                                    
+                                    Values Set: <br><br>
+                                    
+                                    Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_max . " Min <br>
+                                    Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
+                                    
+                                    Date and Time: " . $dateResult . " <br>
+                                    Actual Room Temperature: " . $getTemp . "<br>
+                                    Actual Room Humidity: " . $getHumi . " <br><br>
+                                    
+                                    Click the link for more information: <br>
+                                    https://martorenzo.click/project/th <br>
+                                    admin@martorenzo.click
+                        ";        
+                        $headers = "MIME-Version: 1.0\r\n";
+                        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                        $headers .= "From: admin@martorenzo.click";
+                        mail($to,$subject,$txt,$headers);
+                    }
+                }
+
+                // sms
+                {
+                    $sid    = "ACc43025dca93136cccc27e2cc202622d0"; 
+                    $token  = "7f4aa7a8bcd5b5f2ced4de50aadd51a2"; 
+                    $twilio = new Client($sid, $token); 
+                    $message = $twilio->messages 
+                                    ->create($rowsusr->user_phone, // to 
+                                            array(  
+                                                "messagingServiceSid" => "MG6e57bd22bb3e892c6448cdc08cb5d61a",      
+                                                "body" => "
+                                                    <b>URGENT!</b> <br>
+                                                    Temperature and Humidity Monitoring System has detected a limit extent on Pharmacy Department. <br><br>
+                                                    
+                                                    Values Set: <br><br>
+                                                    
+                                                    Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_max . " Min <br>
+                                                    Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
+                                                    
+                                                    Date and Time: " . $dateResult . " <br>
+                                                    Actual Room Temperature: " . $getTemp . "<br>
+                                                    Actual Room Humidity: " . $getHumi . " <br><br>
+                                                    
+                                                    Click the link for more information: <br>
+                                                    https://martorenzo.click/project/th <br>
+                                                    admin@martorenzo.click
+                                                "
+                                            )  
+                                        ); 
                 }
             }
-
-            // sms
-            $sid    = "ACc43025dca93136cccc27e2cc202622d0"; 
-            $token  = "7f4aa7a8bcd5b5f2ced4de50aadd51a2"; 
-            $twilio = new Client($sid, $token); 
-            $message = $twilio->messages 
-                            ->create("+639614335484", // to 
-                                    array(  
-                                        "messagingServiceSid" => "MG6e57bd22bb3e892c6448cdc08cb5d61a",      
-                                        "body" => "hello world" 
-                                    )  
-                                ); 
         }
     }
     
