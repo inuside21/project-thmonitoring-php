@@ -17,7 +17,7 @@
     $_SESSION['mainUrl'] = "";
 
     // Content
-    $contentPageTitle = "Project - Temp & Humidity Monitoring";
+    $contentPageTitle = "Web-Based Monitoring";
 
     // Content Side Menu
     $contentPageMenu = '
