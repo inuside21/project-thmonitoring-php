@@ -241,16 +241,17 @@
                                 }
                                 if (check >= 2)
                                 {
-                                    $('').removeClass("panel-bd panel-danger panel-success").addClass("panel-success");
+                                    $('#cPanelDev' + item.id).removeClass("panel-bd panel-danger panel-success").addClass("panel-success");
                                 }
                                 else
                                 {
-                                    $('').removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
+                                    $('#cPanelDev' + item.id).removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
                                 }
 
-                                $('#rName').val(result.data.dev_name);
-                                $('#rTempHigh').val(result.data.dev_temp_max);
-                                $('#rTempLow').val(result.data.dev_temp_min);
+                                // value
+                                $('#cPanelDevName' + item.id).val(item.dev_name);
+                                $('#cPanelDevTemp' + item.id).val(item.dev_temp);
+                                $('#cPanelDevHumi' + item.id).val(item.dev_humi);
                             }
                             
                             /*
