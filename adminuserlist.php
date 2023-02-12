@@ -120,8 +120,8 @@
                             <i class=pe-7s-display1></i>
                         </div>
                         <div class=header-title>
-                            <h1>Device List</h1>
-                            <small>View all device information</small>
+                            <h1>User List</h1>
+                            <small>View all user information</small>
                             <ol class=breadcrumb>
                                 <li class=active><a href=dashboard.php><i class=pe-7s-home></i> Home</a></li>
                             </ol>
@@ -136,7 +136,7 @@
                         <div class="panel panel-bd">
                             <div class="panel-heading">
                                 <div class="panel-title">
-                                    <h4>Device List</h4>
+                                    <h4>User List</h4>
                                 </div>
                                 <div class=n2Status>
                                     <br><br>
@@ -147,10 +147,10 @@
                                     <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Device ID</th>
-                                                <th>Device Name</th>
-                                                <th>Temperature</th>
-                                                <th>Humidity</th>
+                                                <th>User Full Name</th>
+                                                <th>Username</th>
+                                                <th>Contact</th>
+                                                <th>Email</th>
                                                 <th>Control</th>
                                             </tr>
                                         </thead>
@@ -215,26 +215,26 @@
             $("#dataTableExample1").DataTable({
                 ordering: "false",
                 ajax: {
-                    url: 'server/api.php?mode=devviewlist',
+                    url: 'server/api.php?mode=userlist',
                     dataSrc: 'data',
                 },
                 columns: [
                     { 
-                        data: 'id'
+                        data: 'user_fname'
                     },
                     { 
-                        data: 'dev_name'
+                        data: 'user_uname'
                     },
                     { 
-                        data: 'dev_temp'
+                        data: 'user_phone'
                     },
                     { 
-                        data: 'dev_humi'
+                        data: 'user_email'
                     },
                     { 
                         data: null, 
                         render: function ( data, type, row, meta ) {
-                            return '<center><a href="adminroomview.php?id=' + data.id + '">View</a></center>';
+                            return '<center><a href="adminuserview.php?id=' + data.id + '">View</a></center>';
                         } 
                     }
                 ]

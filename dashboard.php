@@ -129,6 +129,13 @@
                                 <li><a href="adminroomlist.php">Device List</a></li>
                             </ul>
                         </li>
+                        <li>
+                            <a href="#" class="material-ripple"><i class="material-icons">domain</i> User Manager<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a href="adminuseradd.php">Add User</a></li>
+                                <li><a href="adminuserlist.php">User List</a></li>
+                            </ul>
+                        </li>
                         
                     </ul>
                 </div>
