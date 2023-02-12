@@ -62,6 +62,109 @@
         JSONSet("error", "Token Error", "Token Error");
     }
 
+    // View User
+    // ----------------------
+    if ($_GET['mode'] == 'userview')
+    {
+        $resData = JSONGet();
+
+        // login
+        $sql="select * FROM user_tbl where id = '" . $_POST['did'] . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            JSONSet("ok", "", "", $rowsgetacc);
+        }
+
+        // result
+        JSONSet("error", "Device Error", "Id invalid" . $_POST['did']);
+    }
+
+    // View User List
+    // ----------------------
+    if ($_GET['mode'] == 'userlist')
+    {
+        $resData = JSONGet();
+
+        // set
+        $resList = array();
+
+        // login
+        $sql="select * FROM user_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $resList[] = $rowsgetacc;
+        }
+
+        JSONSet("ok", "", "", $resList);
+    }
+
+    // Add User
+    // ----------------------
+    if ($_GET['mode'] == 'useradd')
+    {
+        $resData = JSONGet();
+
+        // login
+        $sql="insert into user_tbl
+                (
+                    user_uname,
+                    user_pword,
+                    user_fname,
+                    user_phone,
+                    user_email
+                )
+            values
+                (
+                    '" . $_POST['rUname'] . "',
+                    '" . $_POST['rPass'] . "',
+                    '" . $_POST['rFname'] . "',
+                    '" . $_POST['rContact'] . "',
+                    '" . $_POST['rEmail'] . "'
+                )"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
+        // result
+        JSONSet("ok", "Success!", "New User added successfully.");
+    }
+
+    // Edit User
+    // ----------------------
+    if ($_GET['mode'] == 'useredit')
+    {
+        $resData = JSONGet();
+
+        // login
+        $sql="update user_tbl set
+                    user_uname = '" . $_POST['rUname'] . "',
+                    user_pword = '" . $_POST['rPass'] . "',
+                    user_fname = '" . $_POST['rFname'] . "',
+                    user_phone = '" . $_POST['rContact'] . "',
+                    user_email = '" . $_POST['rEmail'] . "'
+            where id = '" . $_POST['rId'] . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
+        // result
+        JSONSet("ok", "Success!", "User details updated successfully.");
+    }
+
+    // Delete User
+    // ----------------------
+    if ($_GET['mode'] == 'userdelete')
+    {
+        $resData = JSONGet();
+
+        // login
+        $sql="delete from user_tbl where id = '" . $_POST['rId'] . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
+        // result
+        JSONSet("ok", "Success!", "User details removed successfully.");
+    }
+
+
+
     // View Device Logs
     // ----------------------
     if ($_GET['mode'] == 'devviewlogs')

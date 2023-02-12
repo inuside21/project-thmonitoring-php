@@ -98,12 +98,19 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class=nav id=side-menu>
                         <li class="nav-heading "> <span>Main Navigation</span></li>
-                        <li class=active><a href=dashboard.php class=material-ripple><i class=material-icons>home</i> Dashboard</a></li>
+                        <li><a href=dashboard.php class=material-ripple><i class=material-icons>home</i> Dashboard</a></li>
                         <li>
                             <a href="#" class="material-ripple"><i class="material-icons">domain</i> Device Manager<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li><a href="adminroomadd.php">Add Device</a></li>
                                 <li><a href="adminroomlist.php">Device List</a></li>
+                            </ul>
+                        </li>
+                        <li class=active>
+                            <a href="#" class="material-ripple"><i class="material-icons">domain</i> User Manager<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a href="adminuseradd.php">Add User</a></li>
+                                <li><a href="adminuserlist.php">User List</a></li>
                             </ul>
                         </li>
                         

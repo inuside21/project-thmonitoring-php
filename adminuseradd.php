@@ -90,12 +90,19 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class=nav id=side-menu>
                         <li class="nav-heading "> <span>Main Navigation</span></li>
-                        <li class=active><a href=dashboard.php class=material-ripple><i class=material-icons>home</i> Dashboard</a></li>
+                        <li><a href=dashboard.php class=material-ripple><i class=material-icons>home</i> Dashboard</a></li>
                         <li>
                             <a href="#" class="material-ripple"><i class="material-icons">domain</i> Device Manager<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li><a href="adminroomadd.php">Add Device</a></li>
                                 <li><a href="adminroomlist.php">Device List</a></li>
+                            </ul>
+                        </li>
+                        <li class=active>
+                            <a href="#" class="material-ripple"><i class="material-icons">domain</i> User Manager<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a href="adminuseradd.php">Add User</a></li>
+                                <li><a href="adminuserlist.php">User List</a></li>
                             </ul>
                         </li>
                         
@@ -159,25 +166,25 @@
                                             <div class="form-group row">
                                                 <label for="example-text-input" class="col-sm-2 col-form-label">Password</label>
                                                 <div class="col-sm-10">
-                                                    <input class="form-control" type="number" id="rPass" name="rPass" required>
+                                                    <input class="form-control" type="text" id="rPass" name="rPass" required>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="example-text-input" class="col-sm-2 col-form-label">Full Name</label>
                                                 <div class="col-sm-10">
-                                                    <input class="form-control" type="number" id="rFname" name="rFname" required>
+                                                    <input class="form-control" type="text" id="rFname" name="rFname" required>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="example-text-input" class="col-sm-2 col-form-label">Contact</label>
                                                 <div class="col-sm-10">
-                                                    <input class="form-control" type="number" id="rContact" name="rContact" required>
+                                                    <input class="form-control" type="text" id="rContact" name="rContact" required>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="example-text-input" class="col-sm-2 col-form-label">Email</label>
                                                 <div class="col-sm-10">
-                                                    <input class="form-control" type="number" id="rEmail" name="rEmail" required>
+                                                    <input class="form-control" type="text" id="rEmail" name="rEmail" required>
                                                 </div>
                                             </div>
                                             
