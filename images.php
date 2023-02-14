@@ -2,10 +2,6 @@
 
     // Database
     include("config/config.php");
-
-    // NOTE: CHANGE THIS BASE ON "id" column OF DEVICE TABLE
-    // NOTE: HOST DONT HAVE THIS.
-    $myDeviceId = "0";
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +33,7 @@
                         </div>
                         <!-- Start Atribute Navigation -->
                         <div class="attr-nav">
-                            <h1 style="color: white;">Temperature & Humidity Monitoring</h1>
+                            <h1 style="color: white;">Web-Based Monitoring</h1>
                         </div>
                         <!-- End Atribute Navigation -->
                         <!-- /.navbar-header -->
@@ -280,7 +276,6 @@
                     type: "POST",
                     url: "server/api.php?mode=devview",
                     data: {
-                        "did": <?php echo $myDeviceId; ?>,
                     },
                     success: function(data) {
                         // result
@@ -291,38 +286,6 @@
                         {
                             deviceData = result.data;
                             LoadDisplay();
-                        }
-                        else
-                        {
-                            console.log("Error." . result.message);
-                        }
-                    },
-                    error: function(data) {
-                        console.log("Critical Error ajax");
-                    }
-                });
-            }
-
-            function LoadDeviceHosting()
-            {
-                $.ajax({
-                    type: "POST",
-                    url: "https://martorenzo.click/project/th/server/api.php?mode=devview",
-                    cors: false ,
-                    data: {
-                        "did": <?php echo $myDeviceId; ?>,
-                    },
-                    success: function(data) {
-                        // result
-                        const result = JSON.parse(data);
-
-                        // check
-                        if (result.status == "ok")
-                        {
-                            //deviceData = result.data;
-                            //LoadDisplay();
-
-                            $("#cPanelName").text(result.data?.dev_name)
                         }
                         else
                         {
@@ -358,7 +321,7 @@
                 lengthMenu: [[1], [1]],
                 "dom": 'rtip',
                 ajax: {
-                    url: 'server/api.php?mode=devviewimg&did=<?php echo $myDeviceId; ?>',
+                    url: 'server/api.php?mode=devviewimg',
                     dataSrc: 'data',
                 },
                 columns: [
