@@ -226,11 +226,108 @@
     }
 
 
-    // Adjust Temp Max
+    // Adjust Temp Max Up
     // ----------------------
-    if ($_GET['mode'] == 'devupdatetempmax')
+    if ($_GET['mode'] == 'devupdatetempmaxup')
     {
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/updatehost.py 0 " . $rowsgetacc->id);
+            return;
+        }
+    }
 
+    // Adjust Temp Max Down
+    // ----------------------
+    if ($_GET['mode'] == 'devupdatetempmaxdown')
+    {
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/updatehost.py 1 " . $rowsgetacc->id);
+            return;
+        }
+    }
+
+    // Adjust Temp Min Up
+    // ----------------------
+    if ($_GET['mode'] == 'devupdatetempminup')
+    {
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/updatehost.py 2 " . $rowsgetacc->id);
+            return;
+        }
+    }
+
+    // Adjust Temp Min Up
+    // ----------------------
+    if ($_GET['mode'] == 'devupdatetempmindown')
+    {
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/updatehost.py 3 " . $rowsgetacc->id);
+            return;
+        }
+    }
+
+    // Adjust Humi Max Up
+    // ----------------------
+    if ($_GET['mode'] == 'devupdatehumimaxup')
+    {
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/updatehost.py 4 " . $rowsgetacc->id);
+            return;
+        }
+    }
+
+    // Adjust Humi Max Down
+    // ----------------------
+    if ($_GET['mode'] == 'devupdatehumimaxdown')
+    {
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/updatehost.py 5 " . $rowsgetacc->id);
+            return;
+        }
+    }
+
+    // Adjust Humi Min Up
+    // ----------------------
+    if ($_GET['mode'] == 'devupdatehumiminup')
+    {
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/updatehost.py 6 " . $rowsgetacc->id);
+            return;
+        }
+    }
+
+    // Adjust Humi Min Up
+    // ----------------------
+    if ($_GET['mode'] == 'devupdatehumimindown')
+    {
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/updatehost.py 7 " . $rowsgetacc->id);
+            return;
+        }
     }
     
     

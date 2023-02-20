@@ -23,10 +23,6 @@ while True :
       target_url = "https://martorenzo.click/project/th/server/api.php?mode=dupdatehost&did=" + deviceId[0] + "&dval=" + x
       request = urllib.request.Request(target_url)
       response = urllib.request.urlopen(request)        
-
-      # sync device from hosting
-      
-
-
+      time.sleep(1)
   except :
     print("Error reading...")

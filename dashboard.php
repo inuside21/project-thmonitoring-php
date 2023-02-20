@@ -167,15 +167,43 @@
                                 <div class=row>
 
                                     <div class="col-lg-6">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px;">
+                                        <div id="cPanelTempMain" class="panel panel-bd" style="border-radius: 50px;">
                                             <div class=panel-heading style="border-radius: 50px;">
-                                                <div class=panel-title style="padding: 20px;">
+                                                <div class=panel-title style="padding: 10px;">
                                                     <center>
-                                                        <img src="assets/images/img-temp.png" width="140px" height="140px" />
+                                                        <img src="assets/images/img-temp.png" width="120px" height="120px" />
                                                         <br><br><br><br>
-                                                        <h1 style="font-size: 100px !important;"><span id="cPanelTemp">99.99</span> °c</h1>
+                                                        <h1 style="font-size: 80px !important;"><span id="cPanelTemp">99.99</span> °c</h1>
                                                         <br><br>
-                                                        <h1 style="font-size: 40px !important;">Temperature</h1>
+                                                        <Table width="100%">
+                                                            <tr>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton" id="cPanelBtnTempMaxUp">+</div></center>
+                                                                </td>
+                                                                <td rowspan="3">
+                                                                    <center><h1 style="font-size: 40px !important;">Temperature</h1></center>
+                                                                </td>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton" id="cPanelBtnTempMinUp">+</div></center>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton"><b><span id="cPanelTempMax">---</span></b></div></center>
+                                                                </td>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton"><b><span id="cPanelTempMin">---</span></b></div></center>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton" id="cPanelBtnTempMaxDown">-</div></center>
+                                                                </td>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton" id="cPanelBtnTempMinDown">-</div></center>
+                                                                </td>
+                                                            </tr>
+                                                        </Table>
                                                     </center>
                                                 </div>
                                             </div>
@@ -183,15 +211,43 @@
                                     </div>
 
                                     <div class="col-lg-6">
-                                        <div id="cPanel" class="panel panel-bd" style="border-radius: 50px;">
+                                        <div id="cPanelHumiMain" class="panel panel-bd" style="border-radius: 50px;">
                                             <div class=panel-heading style="border-radius: 50px;">
-                                                <div class=panel-title style="padding: 20px;">
+                                                <div class=panel-title style="padding: 10px;">
                                                     <center>
-                                                        <img src="assets/images/img-humi.png" width="140px" height="140px" />
+                                                        <img src="assets/images/img-humi.png" width="120px" height="120px" />
                                                         <br><br><br><br>
-                                                        <h1 style="font-size: 100px !important;"><span id="cPanelHumi">99.99</span> %</h1>
+                                                        <h1 style="font-size: 80px !important;"><span id="cPanelHumi">99.99</span> %</h1>
                                                         <br><br>
-                                                        <h1 style="font-size: 40px !important;">Humidity</h1>
+                                                        <Table width="100%">
+                                                            <tr>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton" id="cPanelBtnHumiMaxUp">+</div></center>
+                                                                </td>
+                                                                <td rowspan="3">
+                                                                    <center><h1 style="font-size: 40px !important;">Humidity</h1></center>
+                                                                </td>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton" id="cPanelBtnHumiMinUp">+</div></center>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton"><b><span id="cPanelHumiMax">---</span></b></div></center>
+                                                                </td>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton"><b><span id="cPanelHumiMin">---</span></b></div></center>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton" id="cPanelBtnHumiMaxDown">-</div></center>
+                                                                </td>
+                                                                <td>
+                                                                    <center><div width="100%" height="100%" class="divButton" id="cPanelBtnHumiMinDown">-</div></center>
+                                                                </td>
+                                                            </tr>
+                                                        </Table>
                                                     </center>
                                                 </div>
                                             </div>
@@ -203,9 +259,7 @@
                                             <div class=panel-heading style="border-radius: 50px; height: 150px;">
                                                 <div class=panel-title style="padding: 20px;">
                                                     <center>
-                                                        <h1 style="font-size: 60px !important;"><span id="cPanelName">Test Device</span></h1>
-                                                        <br><br>
-                                                        <h1 style="font-size: 40px !important;">Device Name</h1>
+                                                        <h1 style="font-size: 30px !important;"><span id="cPanelName">Test Device</span></h1>
                                                     </center>
                                                 </div>
                                             </div>
@@ -218,8 +272,7 @@
                                                 <div class=panel-title style="padding: 20px;">
                                                     <a href="logs.php">
                                                         <center>
-                                                            <br>
-                                                            <h1 style="font-size: 60px !important;"><span id="">View Logs</span></h1>
+                                                            <h1 style="font-size: 30px !important;"><span id="">View Logs</span></h1>
                                                         </center>
                                                     </a>
                                                 </div>
@@ -273,6 +326,125 @@
 
             // Events
             // ===================
+            $('#cPanelBtnTempMaxUp').click(function(e) {  
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devupdatetempmaxup",
+                    data: {
+                    },
+                    success: function(data) {
+                        
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            });
+
+            $('#cPanelBtnTempMaxDown').click(function(e) {  
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devupdatetempmaxdown",
+                    data: {
+                    },
+                    success: function(data) {
+                        
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            });
+
+            $('#cPanelBtnTempMinUp').click(function(e) {  
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devupdatetempminup",
+                    data: {
+                    },
+                    success: function(data) {
+                        
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            });
+
+            $('#cPanelBtnTempMinDown').click(function(e) {  
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devupdatetempmindown",
+                    data: {
+                    },
+                    success: function(data) {
+                        
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            });
+
+            $('#cPanelBtnHumiMaxUp').click(function(e) {  
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devupdatehumimaxup",
+                    data: {
+                    },
+                    success: function(data) {
+                        
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            });
+
+            $('#cPanelBtnHumiMaxDown').click(function(e) {  
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devupdatehumimaxdown",
+                    data: {
+                    },
+                    success: function(data) {
+                        
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            });
+
+            $('#cPanelBtnHumiMinUp').click(function(e) {  
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devupdatehumiminup",
+                    data: {
+                    },
+                    success: function(data) {
+                        
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            });
+
+            $('#cPanelBtnHumiMinDown').click(function(e) {  
+                $.ajax({
+                    type: "POST",
+                    url: "server/api.php?mode=devupdatehumimindown",
+                    data: {
+                    },
+                    success: function(data) {
+                        
+                    },
+                    error: function(data) {
+                        console.log("Critical Error ajax");
+                    }
+                });
+            });
             
 
 
@@ -317,6 +489,34 @@
                     hour12: true,
                 });
                 $('#datenow').text(time.toLocaleString());
+
+                // temp
+                if (parseFloat(deviceData.dev_temp_max) > parseFloat(deviceData.dev_temp) && parseFloat(deviceData.dev_temp_min) < parseFloat(deviceData.dev_temp))
+                {
+                    $('#cPanelTempMain').removeClass("panel-bd panel-danger panel-success").addClass("panel-success");
+                }
+                else
+                {
+                    $('#cPanelTempMain').removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
+                }
+
+                // humi
+                if (parseFloat(deviceData.dev_humi_max) > parseFloat(deviceData.dev_humi) && parseFloat(deviceData.dev_humi_min) < parseFloat(deviceData.dev_humi))
+                {
+                    $('#cPanelHumiMain').removeClass("panel-bd panel-danger panel-success").addClass("panel-success");
+                }
+                else
+                {
+                    $('#cPanelHumiMain').removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
+                }
+
+                // Temp Max Min
+                $('#cPanelTempMax').text(deviceData.dev_temp_max);
+                $('#cPanelTempMin').text(deviceData.dev_temp_min);
+
+                // Humi Max Min
+                $('#cPanelHumiMax').text(deviceData.dev_humi_max);
+                $('#cPanelHumiMin').text(deviceData.dev_humi_min);
             }
         </script>
     </body>

@@ -6,6 +6,7 @@ from urllib.request import urlopen
 
                 
 while True :
+  time.sleep(1)
   try :
     # get device id
     target_url = "http://localhost/thserver/server/api.php?mode=devviewid"
@@ -23,7 +24,5 @@ while True :
     target_url = "http://localhost/thserver/server/api.php?mode=devedit&ddat=" + deviceData
     request = urllib.request.Request(target_url)
     response = urllib.request.urlopen(request)
-
-    time.sleep(1)
   except :
     print("Error reading...")

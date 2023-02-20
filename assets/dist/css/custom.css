@@ -500,3 +500,13 @@ src: local(''),
 .text-danger2 {
     color: #ed6056 !important;
 }
+
+/* Button */
+.divButton {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 30px !important;
+    border-radius: 25px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
