@@ -20,7 +20,7 @@ while True :
       deviceId = response.read().decode('utf-8').split(',')
 
       # update hosting
-      target_url = "https://martorenzo.click/project/th/server/api.php?mode=dupdatehost&did=" + deviceId[0] + "&dval=" + x
+      target_url = "https://web-based-monthy.com/server/api.php?mode=dupdatehost&did=" + deviceId[0] + "&dval=" + x
       request = urllib.request.Request(target_url)
       response = urllib.request.urlopen(request)        
       time.sleep(1)

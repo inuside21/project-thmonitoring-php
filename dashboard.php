@@ -327,6 +327,7 @@
             // Events
             // ===================
             $('#cPanelBtnTempMaxUp').click(function(e) {  
+                alert("Adjusted!")
                 $.ajax({
                     type: "POST",
                     url: "server/api.php?mode=devupdatetempmaxup",
@@ -342,6 +343,7 @@
             });
 
             $('#cPanelBtnTempMaxDown').click(function(e) {  
+                alert("Adjusted!")
                 $.ajax({
                     type: "POST",
                     url: "server/api.php?mode=devupdatetempmaxdown",
@@ -357,6 +359,7 @@
             });
 
             $('#cPanelBtnTempMinUp').click(function(e) {  
+                alert("Adjusted!")
                 $.ajax({
                     type: "POST",
                     url: "server/api.php?mode=devupdatetempminup",
@@ -372,6 +375,7 @@
             });
 
             $('#cPanelBtnTempMinDown').click(function(e) {  
+                alert("Adjusted!")
                 $.ajax({
                     type: "POST",
                     url: "server/api.php?mode=devupdatetempmindown",
@@ -387,6 +391,7 @@
             });
 
             $('#cPanelBtnHumiMaxUp').click(function(e) {  
+                alert("Adjusted!")
                 $.ajax({
                     type: "POST",
                     url: "server/api.php?mode=devupdatehumimaxup",
@@ -402,6 +407,7 @@
             });
 
             $('#cPanelBtnHumiMaxDown').click(function(e) {  
+                alert("Adjusted!")
                 $.ajax({
                     type: "POST",
                     url: "server/api.php?mode=devupdatehumimaxdown",
@@ -417,6 +423,7 @@
             });
 
             $('#cPanelBtnHumiMinUp').click(function(e) {  
+                alert("Adjusted!")
                 $.ajax({
                     type: "POST",
                     url: "server/api.php?mode=devupdatehumiminup",
@@ -432,6 +439,7 @@
             });
 
             $('#cPanelBtnHumiMinDown').click(function(e) {  
+                alert("Adjusted!")
                 $.ajax({
                     type: "POST",
                     url: "server/api.php?mode=devupdatehumimindown",

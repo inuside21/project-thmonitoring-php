@@ -101,11 +101,17 @@
         $resList = array();
 
         // login
+        $xctr = 1;
         $sql="select * FROM data_tbl order by id desc"; 
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            $resList[] = $rowsgetacc;
+            if ($xctr % 300 == 0)
+            {
+                $resList[] = $rowsgetacc;
+            }
+
+            $xctr++;
         }
 
         // result
@@ -153,7 +159,7 @@
         $rsgetacc=mysqli_query($connection,$sql);
 
         // result
-        JSONSet("ok", "Success!", "Device details updated successfully.");
+        echo $_GET['ddat'];
     }
 
     // Update Device (Monitoring Device)
@@ -177,6 +183,33 @@
             $myDeviceId = $rowsgetacc->id;
         }
 
+        // device
+        $sql="  update device_tbl set 
+                    dev_lastupdate = '" . strtotime($dateResult) . "',
+                    dev_temp = '" . $getTemp . "',
+                    dev_humi = '" . $getHumi . "',
+                    dev_cmd = '" .  $myDeviceId. "'
+            "; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
+        // log
+        $sql="  insert into data_tbl 
+                    (
+                        data_device,
+                        data_date,
+                        data_temp,
+                        data_humi
+                    )
+                values
+                    (
+                        '" . $myDeviceId ."',
+                        '" . $dateResult . "',
+                        '" . $getTemp . "',
+                        '" . $getHumi . "'
+                    )
+            "; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
         // ultrasonic
         if ((int)$getUltrasonic > 300 && (int)$getUltrasonic != 0)
         {
@@ -197,30 +230,6 @@
                 "; 
             $rsgetacc=mysqli_query($connection,$sql);
         }
-
-        // device
-        $sql="  update device_tbl set 
-                    dev_lastupdate = '" . strtotime($dateResult) . "',
-                    dev_temp = '" . $getTemp . "',
-                    dev_humi = '" . $getHumi . "'
-            "; 
-        $rsgetacc=mysqli_query($connection,$sql);
-
-        // log
-        $sql="  insert into data_tbl 
-                    (
-                        data_date,
-                        data_temp,
-                        data_humi
-                    )
-                values
-                    (
-                        '" . $dateResult . "',
-                        '" . $getTemp . "',
-                        '" . $getHumi . "'
-                    )
-            "; 
-        $rsgetacc=mysqli_query($connection,$sql);
 
         echo $myDeviceId . "," . $getUltrasonic;
     }
