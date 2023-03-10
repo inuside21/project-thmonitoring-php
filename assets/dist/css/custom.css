@@ -436,8 +436,6 @@ src: local(''),
 
 /* Form */
 .select2-container--default .select2-selection--single {
-    border-color: #1c1f22;
-    background-color: #1c1f22;
     padding-left: 4px;
 }
 

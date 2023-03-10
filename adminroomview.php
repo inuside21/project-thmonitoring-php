@@ -407,6 +407,12 @@
                     {
                         // display
                         $('#userFname').text(result.data.user_fname.toUpperCase());
+
+                        // check admin
+                        if (result.data.user_access == "0")
+                        {
+                            window.location.href = "dashboard.php";
+                        }
                     }
                     else
                     {

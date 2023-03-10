@@ -1,11 +1,7 @@
 <?php
 
     // Database
-    require_once 'twilio-php-main/src/Twilio/autoload.php'; 
     include("../config/config.php");
-
-    // SMS
-    use \Twilio\Rest\Client; 
 
     // check
     if (!isset($_GET['mode'])) {
@@ -113,7 +109,8 @@
                     user_pword,
                     user_fname,
                     user_phone,
-                    user_email
+                    user_email,
+                    user_access
                 )
             values
                 (
@@ -121,7 +118,8 @@
                     '" . $_POST['rPass'] . "',
                     '" . $_POST['rFname'] . "',
                     '" . $_POST['rContact'] . "',
-                    '" . $_POST['rEmail'] . "'
+                    '" . $_POST['rEmail'] . "',
+                    '" . $_POST['rAccess'] . "'
                 )"; 
         $rsgetacc=mysqli_query($connection,$sql);
 
@@ -141,7 +139,8 @@
                     user_pword = '" . $_POST['rPass'] . "',
                     user_fname = '" . $_POST['rFname'] . "',
                     user_phone = '" . $_POST['rContact'] . "',
-                    user_email = '" . $_POST['rEmail'] . "'
+                    user_email = '" . $_POST['rEmail'] . "',
+                    user_access = '" . $_POST['rAccess'] . "'
             where id = '" . $_POST['rId'] . "'"; 
         $rsgetacc=mysqli_query($connection,$sql);
 
@@ -163,8 +162,6 @@
         JSONSet("ok", "Success!", "User details removed successfully.");
     }
 
-
-
     // View Device Logs
     // ----------------------
     if ($_GET['mode'] == 'devviewlogs')
@@ -175,11 +172,18 @@
         $resList = array();
 
         // login
+        // get every 30th
+        $xctr = 1;
         $sql="select * FROM data_tbl where data_device = '" . $_GET['did'] . "' order by id desc"; 
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            $resList[] = $rowsgetacc;
+            if ($xctr % 14400 == 0)
+            {
+                $resList[] = $rowsgetacc;
+            }
+            
+            $xctr++;
         }
 
         // result
@@ -202,6 +206,21 @@
 
         // result
         JSONSet("error", "Device Error", "Id invalid" . $_POST['did']);
+    }
+
+    // View Device Data (Monitoring Host)
+    // ----------------------
+    if ($_GET['mode'] == 'devviewdata')
+    {
+        $resData = JSONGet();
+
+        // device
+        $sql="select * from device_tbl where id = '" . $_GET['did'] . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            echo $rowsgetacc->id . "," . $rowsgetacc->dev_name . "," . $rowsgetacc->dev_temp . "," . $rowsgetacc->dev_humi . "," . $rowsgetacc->dev_temp_max . "," . $rowsgetacc->dev_temp_min . "," . $rowsgetacc->dev_humi_max . "," . $rowsgetacc->dev_humi_min;
+        }
     }
 
     // View Device List
@@ -287,46 +306,6 @@
         JSONSet("ok", "Success!", "Device details removed successfully.");
     }
 
-    // Update Device (Monitoring)
-    // ----------------------
-    if ($_GET['mode'] == 'dupdate')
-    {
-        $resData = JSONGet();
-
-        $getVal = $_GET['dval'];
-        $getTemp = explode(',', $getVal)[0];
-        $getHumi = explode(',', $getVal)[1];
-
-        // device
-        $sql="  update device_tbl set 
-                    dev_lastupdate = '" . strtotime($dateResult) . "',
-                    dev_temp = '" . $getTemp . "',
-                    dev_humi = '" . $getHumi . "'
-                where id = '" . $myDeviceId . "'
-            "; 
-        $rsgetacc=mysqli_query($connection,$sql);
-
-        // log
-        $sql="  insert into data_tbl 
-                    (
-                        data_date,
-                        data_device,
-                        data_temp,
-                        data_humi
-                    )
-                values
-                    (
-                        '" . $dateResult . "',
-                        '" . $myDeviceId . "',
-                        '" . $getTemp . "',
-                        '" . $getHumi . "'
-                    )
-            "; 
-        $rsgetacc=mysqli_query($connection,$sql);
-
-        echo $myDeviceId;
-    }
-
     // Update Device (Monitoring Host)
     // ----------------------
     if ($_GET['mode'] == 'dupdatehost')
@@ -372,73 +351,213 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            $sql="select * FROM user_tbl"; 
-            $rsusr=mysqli_query($connection,$sql);
-            while ($rowsusr = mysqli_fetch_object($rsusr))
+            // check alert
+            if ((int)$rowsgetacc->dev_nextalert <= strtotime($dateResult))
             {
-                // email
+                // next
+                $sql="  update device_tbl set 
+                            dev_nextalert = '" . strtotime($dateResult) + 300 . "'
+                        where id = '" . $getId . "'
+                    "; 
+                $rsupd=mysqli_query($connection,$sql);
+            
+                // alert
+                $sql="select * FROM user_tbl"; 
+                $rsusr=mysqli_query($connection,$sql);
+                while ($rowsusr = mysqli_fetch_object($rsusr))
                 {
-                    if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+                    // email
                     {
-                        $to = $rowsusr->user_email;
-                        $subject = "Web-Based Monitoring System";
-                        $txt = "
-                                    <b>URGENT!</b> <br>
-                                    Temperature and Humidity Monitoring System has detected a limit extent on Pharmacy Department. <br><br>
-                                    
-                                    Values Set: <br><br>
-                                    
-                                    Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_max . " Min <br>
-                                    Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
-                                    
-                                    Date and Time: " . $dateResult . " <br>
-                                    Actual Room Temperature: " . $getTemp . "<br>
-                                    Actual Room Humidity: " . $getHumi . " <br><br>
-                                    
-                                    Click the link for more information: <br>
-                                    https://martorenzo.click/project/th <br>
-                                    admin@martorenzo.click
-                        ";        
-                        $headers = "MIME-Version: 1.0\r\n";
-                        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                        $headers .= "From: admin@martorenzo.click";
-                        mail($to,$subject,$txt,$headers);
+                        if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+                        {
+                            $to = $rowsusr->user_email;
+                            $subject = "Web-Based Monitoring System";
+                            $txt = "
+                                        <b>URGENT!</b> <br>
+                                        Temperature and Humidity Monitoring System has detected a limit extent on Pharmacy Department. <br><br>
+                                        
+                                        Values Set: <br>
+                                        Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_max . " Min <br>
+                                        Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
+                                        
+                                        Date and Time: " . $dateResult . " <br>
+                                        Actual Room Temperature: " . $getTemp . " c<br>
+                                        Actual Room Humidity: " . $getHumi . " %<br><br>
+                                        
+                                        Click the link for more information: <br>
+                                        https://web-based-monthy.com <br>
+                                        admin@web-based-monthy.com
+                            ";        
+                            $headers = "MIME-Version: 1.0\r\n";
+                            $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                            $headers .= "From: admin@web-based-monthy.com";
+                            mail($to,$subject,$txt,$headers);
+                        }
                     }
                 }
+            }
 
-                // sms
+            // check alert
+            if ((int)$rowsgetacc->dev_nextalert2 <= strtotime($dateResult))
+            {
+                // next
+                $sql="  update device_tbl set 
+                            dev_nextalert2 = '" . strtotime($dateResult) + 1800 . "'
+                        where id = '" . $getId . "'
+                    "; 
+                $rsupd=mysqli_query($connection,$sql);
+            
+                // alert
+                $sql="select * FROM user_tbl"; 
+                $rsusr=mysqli_query($connection,$sql);
+                while ($rowsusr = mysqli_fetch_object($rsusr))
                 {
-                    $sid    = "ACc43025dca93136cccc27e2cc202622d0"; 
-                    $token  = "7f4aa7a8bcd5b5f2ced4de50aadd51a2"; 
-                    $twilio = new Client($sid, $token); 
-                    $message = $twilio->messages 
-                                    ->create($rowsusr->user_phone, // to 
-                                            array(  
-                                                "messagingServiceSid" => "MG6e57bd22bb3e892c6448cdc08cb5d61a",      
-                                                "body" => "
-                                                    <b>URGENT!</b> <br>
-                                                    Temperature and Humidity Monitoring System has detected a limit extent on Pharmacy Department. <br><br>
-                                                    
-                                                    Values Set: <br><br>
-                                                    
-                                                    Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_max . " Min <br>
-                                                    Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
-                                                    
-                                                    Date and Time: " . $dateResult . " <br>
-                                                    Actual Room Temperature: " . $getTemp . "<br>
-                                                    Actual Room Humidity: " . $getHumi . " <br><br>
-                                                    
-                                                    Click the link for more information: <br>
-                                                    https://martorenzo.click/project/th <br>
-                                                    admin@martorenzo.click
-                                                "
-                                            )  
-                                        ); 
+                    // sms
+                    {
+                       $txt = "WBMONTHY - URGENT!\n\nSet:\nTemp: " . $rowsgetacc->dev_temp_max . "c / " . $rowsgetacc->dev_temp_max . "c\rRH: " . $rowsgetacc->dev_humi_max . "% / " . $rowsgetacc->dev_humi_min . "%\n\nDate: " . $dateResult . "\nActual Temp: " . $getTemp . "c\nActual RH: " . $getHumi . "%"; 
+
+                        $ch = curl_init();
+                        $parameters = array(
+                            'apikey' => '', //Your API KEY
+                            'number' => $rowsusr->user_phone,
+                            'message' => $txt,
+                            'sendername' => 'SEMAPHORE'
+                        );
+                        curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
+                        curl_setopt( $ch, CURLOPT_POST, 1 );
+
+                        //Send the parameters set above with the request
+                        curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $parameters ) );
+
+                        // Receive response from server
+                        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                        $output = curl_exec( $ch );
+                        curl_close ($ch);
+
+                        //Show the server response
+                        echo $output;
+                    }
                 }
             }
         }
     }
-    
+
+    // Update Device (Monitoring Host - Max Min)
+    // ----------------------
+    if ($_GET['mode'] == 'dupdatehost2')
+    {
+        // temp
+        if ($_GET['dval'] == "0")
+        {
+            $sql="update device_tbl set dev_temp_max = dev_temp_max + 1 where id = '" . $_GET['did'] . "'
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        if ($_GET['dval'] == "1")
+        {
+            $sql="update device_tbl set dev_temp_max = dev_temp_max - 1 where id = '" . $_GET['did'] . "'
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        if ($_GET['dval'] == "2")
+        {
+            $sql="update device_tbl set dev_temp_min = dev_temp_min + 1 where id = '" . $_GET['did'] . "'
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        if ($_GET['dval'] == "3")
+        {
+            $sql="update device_tbl set dev_temp_min = dev_temp_min - 1 where id = '" . $_GET['did'] . "'
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        // humi
+        if ($_GET['dval'] == "4")
+        {
+            $sql="update device_tbl set dev_humi_max = dev_humi_max + 1 where id = '" . $_GET['did'] . "'
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        if ($_GET['dval'] == "5")
+        {
+            $sql="update device_tbl set dev_humi_max = dev_humi_max - 1 where id = '" . $_GET['did'] . "'
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        if ($_GET['dval'] == "6")
+        {
+            $sql="update device_tbl set dev_humi_min = dev_humi_min + 1 where id = '" . $_GET['did'] . "'
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        if ($_GET['dval'] == "7")
+        {
+            $sql="update device_tbl set dev_humi_min = dev_humi_min - 1 where id = '" . $_GET['did'] . "'
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        echo "dval: " . $_GET['dval'] . " did: " . $_GET['did'];
+    }
+
+
+
+    // Update Device (Monitoring Host - Max Min)
+    // ----------------------
+    if ($_GET['mode'] == 'notiftest')
+    {
+        $sql="select * FROM user_tbl"; 
+        $rsusr=mysqli_query($connection,$sql);
+        while ($rowsusr = mysqli_fetch_object($rsusr))
+        {
+            // email
+            {
+                $to = $rowsusr->user_email;
+                $subject = "Web-Based Monitoring System";
+                $txt = "
+                            <b>URGENT!</b> <br>
+                            adasdasdasdasdasd TESTING
+                ";        
+                $headers = "MIME-Version: 1.0\r\n";
+                $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                $headers .= "From: admin@web-based-monthy.com";
+                mail($to,$subject,$txt,$headers);
+            }
+
+            // sms
+            {
+                $txt = "WBMONTHY - URGENT!\n\nSet:\nTemp: 100.00c / 100.00c\rRH: 100.00% / 100.00%\n\nDate: 12-23-2033 12:55:55\nActual Temp: 100.00c\nActual RH: 100.00%";  
+
+                $ch = curl_init();
+                $parameters = array(
+                    'apikey' => '', //Your API KEY
+                    'number' => $rowsusr->user_phone,
+                    'message' => $txt,
+                    'sendername' => 'SEMAPHORE'
+                );
+                curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
+                curl_setopt( $ch, CURLOPT_POST, 1 );
+
+                //Send the parameters set above with the request
+                curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $parameters ) );
+
+                // Receive response from server
+                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                $output = curl_exec( $ch );
+                curl_close ($ch);
+
+                //Show the server response
+                echo $output;
+            }
+        }
+    }
     
 
 

@@ -195,6 +195,15 @@
                                                     <input class="form-control" type="text" id="rEmail" name="rEmail" required>
                                                 </div>
                                             </div>
+                                            <div class="form-group row">
+                                                <label for="example-text-input" class="col-sm-2 col-form-label">Admin Access</label>
+                                                <div class="col-sm-10">
+                                                    <select class="form-control" id="rAccess" name="rAccess" required>
+                                                        <option value="0" selected>No</option>
+                                                        <option value="1">Yes</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                             
                                             <div class="form-group row"></div>
                                         </div>
@@ -356,6 +365,10 @@
                 });
             });
 
+            $(document).ready(function() {
+                $('#rAccess').select2();
+            });
+
             // Load User
             $.ajax({
                 type: "POST",
@@ -372,6 +385,12 @@
                     {
                         // display
                         $('#userFname').text(result.data.user_fname.toUpperCase());
+
+                        // check admin
+                        if (result.data.user_access == "0")
+                        {
+                            window.location.href = "dashboard.php";
+                        }
                     }
                     else
                     {
@@ -408,6 +427,7 @@
                         $('#rFname').val(result.data.user_fname);
                         $('#rContact').val(result.data.user_phone);
                         $('#rEmail').val(result.data.user_email);
+                        $('#rAccess').select2("val", result.data.user_access);
                     }
                     else
                     {

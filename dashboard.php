@@ -256,9 +256,9 @@
                                 }
 
                                 // value
-                                $('#cPanelDevName' + item.id).val(item.dev_name);
-                                $('#cPanelDevTemp' + item.id).val(item.dev_temp);
-                                $('#cPanelDevHumi' + item.id).val(item.dev_humi);
+                                $('#cPanelDevName' + item.id).text(item.dev_name);
+                                $('#cPanelDevTemp' + item.id).text(item.dev_temp);
+                                $('#cPanelDevHumi' + item.id).text(item.dev_humi);
                             }
                             
                             /*
