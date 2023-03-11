@@ -106,7 +106,7 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            if ($xctr % 300 == 0)
+            if ($xctr % 3600 == 0)
             {
                 $resList[] = $rowsgetacc;
             }
@@ -128,7 +128,7 @@
         $resList = array();
 
         // login
-        $sql="select * FROM img_tbl order by id desc"; 
+        $sql="select * FROM img_tbl order by id desc limit 100"; 
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
@@ -160,6 +160,32 @@
 
         // result
         echo $_GET['ddat'];
+    }
+
+    // Wifi Device On
+    // ----------------------
+    if ($_GET['mode'] == 'devwifion')
+    {
+        $resData = JSONGet();
+
+        // login
+        $sql="update device_tbl set
+                    dev_wifi = '1'
+        "; 
+        $rsgetacc=mysqli_query($connection,$sql);
+    }
+
+    // Wifi Device Off
+    // ----------------------
+    if ($_GET['mode'] == 'devwifioff')
+    {
+        $resData = JSONGet();
+
+        // login
+        $sql="update device_tbl set
+                    dev_wifi = '0'
+        "; 
+        $rsgetacc=mysqli_query($connection,$sql);
     }
 
     // Update Device (Monitoring Device)

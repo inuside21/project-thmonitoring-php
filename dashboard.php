@@ -2,6 +2,14 @@
 
     // Database
     include("config/config.php");
+
+    $getData = new stdClass();
+    $sql="select * from device_tbl"; 
+    $rsgetacc=mysqli_query($connection,$sql);
+    while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+    {
+        $getData = $rowsgetacc;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -37,10 +45,11 @@
                         </div>
                         <!-- End Atribute Navigation -->
                         <!-- /.navbar-header -->
-                        <div class="nav navbar-top-links navbar-right">
-                            <h2 style="color: silver;">
+                        <div class="nav navbar-top-links navbar-right" style="padding-top: 25px;">
+                            <h2 style="color: silver; display: inline;">
                                 <span id="datenow">2023-01-13 11:59:59</span>
                             </h2>
+                            <img id="wifinow" src="assets/images/wifi-on.png" width="40" height="40" style="margin-left: 30px;">
                         </div> <!-- /.navbar-top-links -->
                     </div> <!-- /. container -->
                 </nav> <!-- /. top navigation -->
@@ -309,24 +318,40 @@
             // Variables
             // ===================
             var deviceData;
+            var deviceIsLogin = false;
+            var deviceLoginTimeout = 0; // 1800 secs
 
 
             // Start
             // ===================
+            //localStorage.setItem("tokenId", "");
 
             
             // Loop
             // ===================
             // Load DUT Data
             setInterval(() => {
+                LoadUser();
                 LoadDevice();
+                LoadInternet();
                 //LoadDeviceHosting();
+
+                deviceLoginTimeout += 1;
             }, 1000);
 
 
             // Events
             // ===================
             $('#cPanelBtnTempMaxUp').click(function(e) {  
+
+                console.log(deviceIsLogin);
+                if (!deviceIsLogin)
+                {
+                    
+                    window.location.href = "login.php";
+                    return;
+                }
+
                 alert("Adjusted!")
                 $.ajax({
                     type: "POST",
@@ -343,6 +368,14 @@
             });
 
             $('#cPanelBtnTempMaxDown').click(function(e) {  
+                console.log(deviceIsLogin);
+                if (!deviceIsLogin)
+                {
+                    
+                    window.location.href = "login.php";
+                    return;
+                }
+
                 alert("Adjusted!")
                 $.ajax({
                     type: "POST",
@@ -359,6 +392,14 @@
             });
 
             $('#cPanelBtnTempMinUp').click(function(e) {  
+                console.log(deviceIsLogin);
+                if (!deviceIsLogin)
+                {
+                    
+                    window.location.href = "login.php";
+                    return;
+                }
+
                 alert("Adjusted!")
                 $.ajax({
                     type: "POST",
@@ -375,6 +416,14 @@
             });
 
             $('#cPanelBtnTempMinDown').click(function(e) {  
+                console.log(deviceIsLogin);
+                if (!deviceIsLogin)
+                {
+                    
+                    window.location.href = "login.php";
+                    return;
+                }
+
                 alert("Adjusted!")
                 $.ajax({
                     type: "POST",
@@ -391,6 +440,14 @@
             });
 
             $('#cPanelBtnHumiMaxUp').click(function(e) {  
+                console.log(deviceIsLogin);
+                if (!deviceIsLogin)
+                {
+                    
+                    window.location.href = "login.php";
+                    return;
+                }
+
                 alert("Adjusted!")
                 $.ajax({
                     type: "POST",
@@ -407,6 +464,14 @@
             });
 
             $('#cPanelBtnHumiMaxDown').click(function(e) {  
+                console.log(deviceIsLogin);
+                if (!deviceIsLogin)
+                {
+                    
+                    window.location.href = "login.php";
+                    return;
+                }
+
                 alert("Adjusted!")
                 $.ajax({
                     type: "POST",
@@ -423,6 +488,14 @@
             });
 
             $('#cPanelBtnHumiMinUp').click(function(e) {  
+                console.log(deviceIsLogin);
+                if (!deviceIsLogin)
+                {
+                    
+                    window.location.href = "login.php";
+                    return;
+                }
+
                 alert("Adjusted!")
                 $.ajax({
                     type: "POST",
@@ -439,6 +512,14 @@
             });
 
             $('#cPanelBtnHumiMinDown').click(function(e) {  
+                console.log(deviceIsLogin);
+                if (!deviceIsLogin)
+                {
+                    
+                    window.location.href = "login.php";
+                    return;
+                }
+                
                 alert("Adjusted!")
                 $.ajax({
                     type: "POST",
@@ -525,6 +606,42 @@
                 // Humi Max Min
                 $('#cPanelHumiMax').text(deviceData.dev_humi_max);
                 $('#cPanelHumiMin').text(deviceData.dev_humi_min);
+            }
+
+            function LoadUser()
+            {
+                if (localStorage.getItem("tokenId") == "1234")
+                {
+                    deviceIsLogin = true;
+                }
+                else
+                {
+                    deviceIsLogin = false;
+                }   
+
+                if (deviceLoginTimeout > 1800)
+                {
+                    deviceIsLogin = false;
+                }
+            }
+
+            function LoadInternet()
+            {
+                if (navigator.onLine) {
+                    if (deviceData?.dev_wifi == "1")
+                    {
+                        var myImage = document.getElementById('wifinow');
+                        myImage.setAttribute('src', 'assets/images/wifi-on.png');
+                    }
+                    else
+                    {
+                        var myImage = document.getElementById('wifinow');
+                        myImage.setAttribute('src', 'assets/images/wifi-off.png');
+                    }
+                } else {
+                    var myImage = document.getElementById('wifinow');
+                    myImage.setAttribute('src', 'assets/images/wifi-off.png');
+                }
             }
         </script>
     </body>

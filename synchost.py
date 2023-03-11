@@ -29,4 +29,17 @@ while True :
     response = urllib.request.urlopen(request)
     deviceData = response.read().decode('utf-8')
     print(deviceData)
-  except Exception as e: print(e)
+
+    # wifi
+    target_url = "http://localhost/thserver/server/api.php?mode=devwifion"
+    request = urllib.request.Request(target_url)
+    response = urllib.request.urlopen(request)
+  except Exception as e:
+    try :
+      # wifi
+      target_url = "http://localhost/thserver/server/api.php?mode=devwifioff"
+      request = urllib.request.Request(target_url)
+      response = urllib.request.urlopen(request)
+      print(e)
+    except Exception as e:
+      print(e)
