@@ -12,6 +12,6 @@ if len(sys.argv) > 0:
   # get device data from hosting
   target_url = "https://web-based-monthy.com/server/api.php?mode=dupdatehost2&did=" + output2 + "&dval=" + output
   request = urllib.request.Request(target_url)
-  response = urllib.request.urlopen(request)        
+  response = urllib.request.urlopen(request, timeout=5)      
   deviceResponse = response.read().decode('utf-8')
   print(deviceResponse)

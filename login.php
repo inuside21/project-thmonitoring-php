@@ -106,8 +106,30 @@
                     
                     if (devicePassword == "<?php echo $getData->dev_pass; ?>")
                     {
-                        window.location.href = "dashboard.php";
-                        localStorage.setItem("tokenId", devicePassword);
+                        $.ajax({
+                            type: "POST",
+                            url: "server/api.php?mode=devpass",
+                            data: {
+                            },
+                            success: function(data) {
+                                // result
+                                const result = JSON.parse(data);
+
+                                // check
+                                if (result.status == "ok")
+                                {
+                                    localStorage.setItem("tokenId", devicePassword);
+                                    window.location.href = "dashboard.php";
+                                }
+                                else
+                                {
+                                    console.log("Error." . result.message);
+                                }
+                            },
+                            error: function(data) {
+                                console.log("Critical Error ajax");
+                            }
+                        }); 
                     }
                     else
                     {

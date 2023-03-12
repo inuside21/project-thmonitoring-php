@@ -69,6 +69,7 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
+            $rowsgetacc->getTime = strtotime($dateResult);
             JSONSet("ok", "", "", $rowsgetacc);
         }
 
@@ -106,7 +107,7 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            if ($xctr % 3600 == 0)
+            if ($xctr % 800 == 0)
             {
                 $resList[] = $rowsgetacc;
             }
@@ -162,6 +163,25 @@
         echo $_GET['ddat'];
     }
 
+    // Pass Device Update
+    // ----------------------
+    if ($_GET['mode'] == 'devpass')
+    {
+        $resData = JSONGet();
+
+        // update
+        $getLastUpdate = strtotime($dateResult) + 60;
+
+        // login
+        $sql="update device_tbl set
+                device_passtimeout = '" . $getLastUpdate . "'
+        "; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
+        // result
+        JSONSet("ok", "", "");
+    }
+
     // Wifi Device On
     // ----------------------
     if ($_GET['mode'] == 'devwifion')
@@ -188,7 +208,7 @@
         $rsgetacc=mysqli_query($connection,$sql);
     }
 
-    // Update Device (Monitoring Device)
+    // Update Device
     // ----------------------
     if ($_GET['mode'] == 'dupdatedevice')
     {
@@ -199,6 +219,9 @@
         $getHumi = explode(',', $getVal)[1];
         $getUltrasonic = explode(',', $getVal)[2];
         $output = "";
+
+        // update
+        $getLastUpdate = strtotime($dateResult) + 60;
 
         // login
         $myDeviceId = "";
@@ -211,7 +234,7 @@
 
         // device
         $sql="  update device_tbl set 
-                    dev_lastupdate = '" . strtotime($dateResult) . "',
+                    dev_lastupdate = '" . $getLastUpdate . "',
                     dev_temp = '" . $getTemp . "',
                     dev_humi = '" . $getHumi . "',
                     dev_cmd = '" .  $myDeviceId. "'
@@ -260,6 +283,54 @@
         echo $myDeviceId . "," . $getUltrasonic;
     }
 
+    // Update Hosting
+    // ----------------------
+    if ($_GET['mode'] == 'dupdatehosting')
+    {
+        // login
+        $myDeviceId = "";
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $myDeviceId = $rowsgetacc->id;
+        }
+
+        // set
+        $url = 'https://web-based-monthy.com/server/api.php?mode=dupdatehosting&did=' . $myDeviceId;
+        $dataLogs = array();
+
+        // get data logs
+        $xctr = 0;
+        $sql="select * FROM data_tbl where data_device = '" . $myDeviceId . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $xctr++;
+            $x = (array)$rowsgetacc;
+            $dataLogs[] = $x;
+        }
+
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataLogs));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // Execute the cURL request
+        $response = curl_exec($ch);
+
+        // Close the cURL session
+        curl_close($ch);
+
+        // Handle the response from the remote server
+        if ($response === false) {
+            echo 'cURL Error: ' . curl_error($ch);
+        } else {
+            echo 'Responses: ' . $response . " xctrA: " . $xctr;
+        }
+    }
 
     // Adjust Temp Max Up
     // ----------------------

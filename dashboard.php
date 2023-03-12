@@ -319,7 +319,6 @@
             // ===================
             var deviceData;
             var deviceIsLogin = false;
-            var deviceLoginTimeout = 0; // 1800 secs
 
 
             // Start
@@ -334,9 +333,6 @@
                 LoadUser();
                 LoadDevice();
                 LoadInternet();
-                //LoadDeviceHosting();
-
-                deviceLoginTimeout += 1;
             }, 1000);
 
 
@@ -555,6 +551,12 @@
                         {
                             deviceData = result.data;
                             LoadDisplay();
+
+                            // password
+                            if (parseFloat(result.data.getTime) >= parseFloat(result.data.device_passtimeout))
+                            {
+                                localStorage.setItem("tokenId", "");
+                            }
                         }
                         else
                         {
@@ -582,21 +584,28 @@
                 // temp
                 if (parseFloat(deviceData.dev_temp_max) > parseFloat(deviceData.dev_temp) && parseFloat(deviceData.dev_temp_min) < parseFloat(deviceData.dev_temp))
                 {
-                    $('#cPanelTempMain').removeClass("panel-bd panel-danger panel-success").addClass("panel-success");
+                    $('#cPanelTempMain').removeClass("panel-bd panel-warning panel-danger panel-success").addClass("panel-success");
                 }
                 else
                 {
-                    $('#cPanelTempMain').removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
+                    $('#cPanelTempMain').removeClass("panel-bd panel-warning panel-danger panel-success").addClass("panel-danger");
                 }
 
                 // humi
                 if (parseFloat(deviceData.dev_humi_max) > parseFloat(deviceData.dev_humi) && parseFloat(deviceData.dev_humi_min) < parseFloat(deviceData.dev_humi))
                 {
-                    $('#cPanelHumiMain').removeClass("panel-bd panel-danger panel-success").addClass("panel-success");
+                    $('#cPanelHumiMain').removeClass("panel-bd panel-warning panel-danger panel-success").addClass("panel-success");
                 }
                 else
                 {
-                    $('#cPanelHumiMain').removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
+                    $('#cPanelHumiMain').removeClass("panel-bd panel-warning panel-danger panel-success").addClass("panel-danger");
+                }
+
+                // device last update
+                if (parseFloat(deviceData.getTime) >= parseFloat(deviceData.dev_lastupdate))
+                {
+                    $('#cPanelTempMain').removeClass("panel-bd panel-warning panel-danger panel-success").addClass("panel-warning");
+                    $('#cPanelHumiMain').removeClass("panel-bd panel-warning panel-danger panel-success").addClass("panel-warning");
                 }
 
                 // Temp Max Min
@@ -618,11 +627,6 @@
                 {
                     deviceIsLogin = false;
                 }   
-
-                if (deviceLoginTimeout > 1800)
-                {
-                    deviceIsLogin = false;
-                }
             }
 
             function LoadInternet()
