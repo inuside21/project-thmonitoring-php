@@ -105,13 +105,14 @@
                                 <li><a href="adminroomlist.php">Device List</a></li>
                             </ul>
                         </li>
-                        <li>
+                        <li id="isadmin">
                             <a href="#" class="material-ripple"><i class="material-icons">domain</i> User Manager<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li><a href="adminuseradd.php">Add User</a></li>
                                 <li><a href="adminuserlist.php">User List</a></li>
                             </ul>
                         </li>
+                        <li><a href="#" class=material-ripple id="uLogout"><i class=material-icons>domain</i> Logout</a></li>
                         
                     </ul>
                 </div>
@@ -135,7 +136,7 @@
                     </div>
                 </div>
 
-                <div class=row>
+                <div class=row id="isadmin">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         
 
@@ -222,7 +223,7 @@
                             </div>
                             <div class="panel-body">
                                 <div class="table-responsive">
-                                    <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                                    <table id="dataTableExample1s" class="table table-bordered table-striped table-hover">
                                         <thead>
                                             <tr>
                                                 <th>Date</th>
@@ -252,6 +253,8 @@
 
 
         <script>
+            var userData;
+
             // Load Web
             $(document).ready(function(){
                 $('[data-toggle="tooltip"]').tooltip({trigger: 'manual'}).tooltip('show');
@@ -262,6 +265,13 @@
 
                 // Press - Submit
                 $('#fSubmit').click(function(e) {
+                    // check
+                    if (userData.user_access == "0")
+                    {
+                        alert("Only admins are allowed to update data.")
+                        return;
+                    }
+
                     swal(
                         {
                             title: "Are you sure?",
@@ -318,6 +328,13 @@
 
                 // Press - Delete
                 $('#fDelete').click(function(e) {
+                    // check
+                    if (userData.user_access == "0")
+                    {
+                        alert("Only admins are allowed to update data.")
+                        return;
+                    }
+
                     swal(
                         {
                             title: "Are you sure?",
@@ -389,6 +406,32 @@
                         }
                     );
                 });
+
+                // Load Table
+                $("#dataTableExample1s").DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'excel'
+                    ],
+                    ordering: "false",
+                    "bSort": false,
+                    "aaSorting": [],
+                    ajax: {
+                        url: 'server/api.php?mode=devviewlogs&did=<?php echo $_GET['id']; ?>',
+                        dataSrc: 'data',
+                    },
+                    columns: [
+                        { 
+                            data: 'data_date'
+                        },
+                        { 
+                            data: 'data_temp'
+                        },
+                        { 
+                            data: 'data_humi'
+                        }
+                    ]
+                });
             });
 
             // Load User
@@ -405,13 +448,16 @@
                     // check
                     if (result.status == "ok")
                     {
+                        userData = result.data;
+
                         // display
                         $('#userFname').text(result.data.user_fname.toUpperCase());
 
                         // check admin
                         if (result.data.user_access == "0")
                         {
-                            window.location.href = "dashboard.php";
+                            $("#isadmin").hide();
+                            //window.location.href = "dashboard.php";
                         }
                     }
                     else
@@ -459,27 +505,7 @@
                 }
             });
 
-            // Load Table
-            $("#dataTableExample1").DataTable({
-                ordering: "false",
-                "bSort": false,
-                "aaSorting": [],
-                ajax: {
-                    url: 'server/api.php?mode=devviewlogs&did=<?php echo $_GET['id']; ?>',
-                    dataSrc: 'data',
-                },
-                columns: [
-                    { 
-                        data: 'data_date'
-                    },
-                    { 
-                        data: 'data_temp'
-                    },
-                    { 
-                        data: 'data_humi'
-                    }
-                ]
-            });
+            
 
             // Logout User
             $('#uLogout').click(function(e) {

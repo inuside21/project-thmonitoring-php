@@ -98,13 +98,14 @@
                                 <li><a href="adminroomlist.php">Device List</a></li>
                             </ul>
                         </li>
-                        <li>
+                        <li id="isadmin">
                             <a href="#" class="material-ripple"><i class="material-icons">domain</i> User Manager<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li><a href="adminuseradd.php">Add User</a></li>
                                 <li><a href="adminuserlist.php">User List</a></li>
                             </ul>
                         </li>
+                        <li><a href="#" class=material-ripple id="uLogout"><i class=material-icons>domain</i> Logout</a></li>
                         
                     </ul>
                 </div>
@@ -209,6 +210,8 @@
 
 
         <script>
+            var userData;
+
             // Load Web
             $(document).ready(function(){
                 $('[data-toggle="tooltip"]').tooltip({trigger: 'manual'}).tooltip('show');
@@ -219,6 +222,13 @@
 
                 // Press - Submit
                 $('#fSubmit').click(function(e) {
+                    // check
+                    if (userData.user_access == "0")
+                    {
+                        alert("Only admins are allowed to update data.")
+                        return;
+                    }
+
                     swal(
                         {
                             title: "Are you sure?",
@@ -306,13 +316,16 @@
                     // check
                     if (result.status == "ok")
                     {
+                        userData = result.data;
+
                         // display
                         $('#userFname').text(result.data.user_fname.toUpperCase());
 
                         // check admin
                         if (result.data.user_access == "0")
                         {
-                            window.location.href = "dashboard.php";
+                            $("#isadmin").hide();
+                            //window.location.href = "dashboard.php";
                         }
                     }
                     else
