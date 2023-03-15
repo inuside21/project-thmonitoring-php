@@ -107,7 +107,7 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            if ($xctr % 800 == 0)
+            if ($xctr % 1200 == 0)
             {
                 $resList[] = $rowsgetacc;
             }
@@ -263,21 +263,38 @@
         if ((int)$getUltrasonic > 300 && (int)$getUltrasonic != 0)
         {
             $newName = GUID() . ".jpg";
-            $output = passthru("sudo fswebcam -d /dev/video5 " . $newName);
+            $retryImage = 0;
 
-            // save
-            $sql="  insert into img_tbl 
-                        (
-                            img_date,
-                            img_name
-                        )
-                    values
-                        (
-                            '" . $dateResult . "',
-                            '" . $newName . "'
-                        )
-                "; 
-            $rsgetacc=mysqli_query($connection,$sql);
+            while (!file_exists($newName) || $retryImage > 5)
+            {
+                $output = passthru("sudo fswebcam -d /dev/video5 " . $newName);
+                sleep(1);
+                $retryImage++;
+            }
+
+            if ($retryImage <= 5)
+            {
+                // save
+                $sql="  insert into img_tbl 
+                            (
+                                img_date,
+                                img_name
+                            )
+                        values
+                            (
+                                '" . $dateResult . "',
+                                '" . $newName . "'
+                            )
+                    "; 
+                $rsgetacc=mysqli_query($connection,$sql);
+            }
+        }
+
+        // sensor
+        if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+        {
+            $output = passthru("sudo python3 /var/www/html/thserver/buzzer.py");
+            sleep(1);
         }
 
         echo $myDeviceId . "," . $getUltrasonic;
