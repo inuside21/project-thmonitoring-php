@@ -10,11 +10,20 @@
         ======================================
     */
 
+    // hour
     $currentHour = date('H');
     if ($currentHour != 6 && $currentHour != 14 && $currentHour != 22)
     {
         return;
     }
+
+    // minute
+    $currentMin = date('i');
+    if ($currentMin != "00")
+    {
+        return;
+    }
+
 
     // auto sms
     // ----------------------
@@ -40,8 +49,8 @@
                             Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
                             
                             Date and Time: " . $dateResult . " <br>
-                            Actual Room Temperature: " . $getTemp . " c<br>
-                            Actual Room Humidity: " . $getHumi . " %<br><br>
+                            Actual Room Temperature: " . $rowsgetacc->dev_temp . " c<br>
+                            Actual Room Humidity: " . $rowsgetacc->dev_humi . " %<br><br>
                             
                             Click the link for more information: <br>
                             https://web-based-monthy.com <br>

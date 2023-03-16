@@ -215,6 +215,28 @@
                         <div class="panel panel-bd">
                             <div class="panel-heading">
                                 <div class="panel-title">
+                                    <h4>Temperature & Humidity</h4>
+                                </div>
+                                <div class=n2Status>
+                                    <br><br>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div id="chartdiv"></div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class=row>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        
+
+                        <div class="panel panel-bd">
+                            <div class="panel-heading">
+                                <div class="panel-title">
                                     <h4>Device Logs</h4>
                                 </div>
                                 <div class=n2Status>
@@ -229,6 +251,40 @@
                                                 <th>Date</th>
                                                 <th>Temperature</th>
                                                 <th>Humidity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class=row>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        
+
+                        <div class="panel panel-bd">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    <h4>Image Logs</h4>
+                                </div>
+                                <div class=n2Status>
+                                    <br><br>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table id="dataTableExample2s" class="table table-bordered table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Image</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -431,6 +487,166 @@
                             data: 'data_humi'
                         }
                     ]
+                });
+
+                // Load Table
+                $("#dataTableExample2s").DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'excel'
+                    ],
+                    ordering: "false",
+                    "bSort": false,
+                    "aaSorting": [],
+                    ajax: {
+                        url: 'server/api.php?mode=devviewimg&did=<?php echo $_GET['id']; ?>',
+                        dataSrc: 'data',
+                    },
+                    columns: [
+                        { 
+                            data: 'devimg_date'
+                        },
+                        {
+                            data: "devimg_filename",
+                            "render": function(data, type, row, meta) {
+                                return '<center><a href="server/images/' + data + '"><img src="server/images/' + data + '" width="150" height="150"></a></center>';
+                            }
+                        }
+                    ]
+                });
+
+                // Load Chart
+                var chart = AmCharts.makeChart("chartdiv", {
+                    "type": "serial",
+                    "theme": "light",
+                    "precision": 2,
+                    "valueAxes": [{
+                            "id": "v1",
+                            "title": "Value",
+                            "position": "left",
+                            "autoGridCount": false,
+                        }],
+                    "graphs": [{
+                            "id": "g1",
+                            "valueAxis": "v1",
+                            "bullet": "round",
+                            "bulletBorderAlpha": 1,
+                            "bulletColor": "#FFFFFF",
+                            "bulletSize": 5,
+                            "hideBulletsCount": 50,
+                            "lineThickness": 2,
+                            "lineColor": "#20acd4",
+                            "type": "smoothedLine",
+                            "dashLength": 5,
+                            "title": "Temperature",
+                            "useLineColorForBulletBorder": true,
+                            "valueField": "market1",
+                            "balloonText": "[[title]]<br /><b style='font-size: 130%'>[[value]]</b>"
+                        }, {
+                            "id": "g2",
+                            "valueAxis": "v1",
+                            "bullet": "round",
+                            "bulletBorderAlpha": 1,
+                            "bulletColor": "#FFFFFF",
+                            "bulletSize": 5,
+                            "hideBulletsCount": 50,
+                            "lineThickness": 2,
+                            "lineColor": "#E5343D",
+                            "type": "smoothedLine",
+                            "dashLength": 5,
+                            "title": "Humidity",
+                            "useLineColorForBulletBorder": true,
+                            "valueField": "market2",
+                            "balloonText": "[[title]]<br /><b style='font-size: 130%'>[[value]]</b>"
+                        }],
+                    "chartScrollbar": [{
+                        "graph": "g1",
+                        "oppositeAxis": false,
+                        "offset": 30,
+                        "scrollbarHeight": 50,
+                        "backgroundAlpha": 0,
+                        "selectedBackgroundAlpha": 0.9,
+                        "selectedBackgroundColor": "#ffffff",
+                        "graphFillAlpha": 0,
+                        "graphLineAlpha": 0.5,
+                        "selectedGraphFillAlpha": 0,
+                        "selectedGraphLineAlpha": 1,
+                        "autoGridCount": true,
+                        "color": "#AAAAAA"
+                    }, {
+                        "graph": "g2",
+                        "oppositeAxis": false,
+                        "offset": 30,
+                        "scrollbarHeight": 50,
+                        "backgroundAlpha": 0,
+                        "selectedBackgroundAlpha": 0.9,
+                        "selectedBackgroundColor": "#ffffff",
+                        "graphFillAlpha": 0,
+                        "graphLineAlpha": 0.5,
+                        "selectedGraphFillAlpha": 0,
+                        "selectedGraphLineAlpha": 1,
+                        "autoGridCount": true,
+                        "color": "#AAAAAA"
+                    }],
+                    "chartCursor": {
+                        "pan": true,
+                        "valueLineEnabled": true,
+                        "valueLineBalloonEnabled": true,
+                        "cursorAlpha": 0,
+                        "valueLineAlpha": 0.2
+                    },
+                    "categoryField": "date",
+                    "categoryAxis": {
+                        "dashLength": 1,
+                        "minorGridEnabled": true,
+                        "labelRotation": 70,
+                    },
+                    "legend": {
+                        "useGraphSettings": true,
+                        "position": "top"
+                    },
+                    "balloon": {
+                        "borderThickness": 1,
+                        "shadowAlpha": 0
+                    },
+                    "dataProvider": [
+                        <?php
+
+                            $arrData = array();
+
+                            // login
+                            $xctr = 1;
+                            $yctr = 1; // 24 data = 24 hrs?
+                            $sql="select * FROM data_tbl where data_device = '" . $_GET['id'] . "' order by id desc";  // and data_date = %dselected ate% when select by date
+                            $rsgetacc=mysqli_query($connection,$sql);
+                            while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+                            {
+                                if ($xctr % 1200 == 0)
+                                {
+                                    if ($yctr <= 24) // adjust this to view more
+                                    {
+                                        $arrData[] = '
+                                            {
+                                                "date": "' . $rowsgetacc->data_date . '",
+                                                "market1": ' . $rowsgetacc->data_temp . ',
+                                                "market2": ' . $rowsgetacc->data_humi . '
+                                            },
+                                        ';
+                                    }
+
+                                    $yctr++;
+                                }
+
+                                $xctr++;
+                            }
+
+                            // chart
+                            foreach(array_reverse($arrData) as $valchart)
+                            {
+                                echo $valchart;
+                            }
+                        ?>
+                        ]
                 });
             });
 

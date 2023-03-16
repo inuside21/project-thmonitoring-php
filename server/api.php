@@ -9,6 +9,9 @@
         exit();
     }
 
+    // sms
+    $apikey = "cb74d2b59aebce2fe78f5d359d270dbb";
+
 
     /*
         ======================================
@@ -110,7 +113,8 @@
                     user_fname,
                     user_phone,
                     user_email,
-                    user_access
+                    user_access,
+                    user_update
                 )
             values
                 (
@@ -119,7 +123,8 @@
                     '" . $_POST['rFname'] . "',
                     '" . $_POST['rContact'] . "',
                     '" . $_POST['rEmail'] . "',
-                    '" . $_POST['rAccess'] . "'
+                    '" . $_POST['rAccess'] . "',
+                    '" . $_POST['rNotifs'] . "'
                 )"; 
         $rsgetacc=mysqli_query($connection,$sql);
 
@@ -140,7 +145,8 @@
                     user_fname = '" . $_POST['rFname'] . "',
                     user_phone = '" . $_POST['rContact'] . "',
                     user_email = '" . $_POST['rEmail'] . "',
-                    user_access = '" . $_POST['rAccess'] . "'
+                    user_access = '" . $_POST['rAccess'] . "',
+                    user_update = '" . $_POST['rNotifs'] . "'
             where id = '" . $_POST['rId'] . "'"; 
         $rsgetacc=mysqli_query($connection,$sql);
 
@@ -178,12 +184,33 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            if ($xctr % 14400 == 0)
+            if ($xctr % 1200 == 0)
             {
                 $resList[] = $rowsgetacc;
             }
             
             $xctr++;
+        }
+
+        // result
+        JSONSet("ok", "", "", $resList);
+    }
+
+    // View Device Logs
+    // ----------------------
+    if ($_GET['mode'] == 'devviewimg')
+    {
+        $resData = JSONGet();
+
+        // set
+        $resList = array();
+
+        // login
+        $sql="select * FROM deviceimg_tbl where dev_id = '" . $_GET['did'] . "' order by id desc limit 1000"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $resList[] = $rowsgetacc;
         }
 
         // result
@@ -249,6 +276,8 @@
     {
         $resData = JSONGet();
 
+        $_POST['rName'] = str_replace(" ", "", $_POST['rName']);
+
         // login
         $sql="insert into device_tbl
                 (
@@ -278,6 +307,8 @@
     {
         $resData = JSONGet();
 
+        $_POST['rName'] = str_replace(" ", "", $_POST['rName']);
+
         // login
         $sql="update device_tbl set
                     dev_name = '" . $_POST['rName'] . "',
@@ -306,7 +337,7 @@
         JSONSet("ok", "Success!", "Device details removed successfully.");
     }
 
-    // Update Device (Monitoring Host)
+    // Update Hosting
     // ----------------------
     if ($_GET['mode'] == 'dupdatehost')
     {
@@ -351,33 +382,26 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            // check alert
-            if ((int)$rowsgetacc->dev_nextalert <= strtotime($dateResult))
+            // alert
+            $sql="select * FROM user_tbl"; 
+            $rsusr=mysqli_query($connection,$sql);
+            while ($rowsusr = mysqli_fetch_object($rsusr))
             {
-                // next
-                $sql="  update device_tbl set 
-                            dev_nextalert = '" . strtotime($dateResult) + 300 . "'
-                        where id = '" . $getId . "'
-                    "; 
-                $rsupd=mysqli_query($connection,$sql);
-            
-                // alert
-                $sql="select * FROM user_tbl"; 
-                $rsusr=mysqli_query($connection,$sql);
-                while ($rowsusr = mysqli_fetch_object($rsusr))
+                // email
                 {
-                    // email
+                    if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
                     {
-                        if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+                        // check alert
+                        if ((int)$rowsgetacc->dev_nextalert <= strtotime($dateResult))
                         {
                             $to = $rowsusr->user_email;
                             $subject = "Web-Based Monitoring System";
                             $txt = "
                                         <b>URGENT!</b> <br>
-                                        Temperature and Humidity Monitoring System has detected a limit extent on Pharmacy Department. <br><br>
+                                        Temperature and Humidity Monitoring System has detected a limit extent on " . $rowsgetacc->dev_name . ". <br><br>
                                         
                                         Values Set: <br>
-                                        Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_max . " Min <br>
+                                        Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_min . " Min <br>
                                         Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
                                         
                                         Date and Time: " . $dateResult . " <br>
@@ -392,54 +416,154 @@
                             $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                             $headers .= "From: admin@web-based-monthy.com";
                             mail($to,$subject,$txt,$headers);
+
+                            // next
+                            $sql="  update device_tbl set 
+                                        dev_nextalert = '" . strtotime($dateResult) + 300 . "'
+                                    where id = '" . $getId . "'
+                                "; 
+                            $rsupd=mysqli_query($connection,$sql);
                         }
                     }
-                }
-            }
-
-            // check alert
-            if ((int)$rowsgetacc->dev_nextalert2 <= strtotime($dateResult))
-            {
-                // next
-                $sql="  update device_tbl set 
-                            dev_nextalert2 = '" . strtotime($dateResult) + 1800 . "'
-                        where id = '" . $getId . "'
-                    "; 
-                $rsupd=mysqli_query($connection,$sql);
-            
-                // alert
-                $sql="select * FROM user_tbl"; 
-                $rsusr=mysqli_query($connection,$sql);
-                while ($rowsusr = mysqli_fetch_object($rsusr))
-                {
-                    // sms
+                    else
                     {
-                       $txt = "WBMONTHY - URGENT!\n\nSet:\nTemp: " . $rowsgetacc->dev_temp_max . "c / " . $rowsgetacc->dev_temp_max . "c\rRH: " . $rowsgetacc->dev_humi_max . "% / " . $rowsgetacc->dev_humi_min . "%\n\nDate: " . $dateResult . "\nActual Temp: " . $getTemp . "c\nActual RH: " . $getHumi . "%"; 
+                        // next
+                        $sql="  update device_tbl set 
+                                    dev_nextalert = '0'
+                                where id = '" . $getId . "'
+                            "; 
+                        $rsupd=mysqli_query($connection,$sql);
+                    }
+                }
 
-                        $ch = curl_init();
-                        $parameters = array(
-                            'apikey' => '', //Your API KEY
-                            'number' => $rowsusr->user_phone,
-                            'message' => $txt,
-                            'sendername' => 'SEMAPHORE'
-                        );
-                        curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
-                        curl_setopt( $ch, CURLOPT_POST, 1 );
+                // sms
+                {
+                    if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+                    {
+                        // check alert
+                        if ((int)$rowsgetacc->dev_nextalert2 <= strtotime($dateResult))
+                        {
+                            $txt = "WBMONTHY - URGENT\n" . $rowsgetacc->dev_name . "!\n\nSet:\nTemp: " . $rowsgetacc->dev_temp_max . "c / " . $rowsgetacc->dev_temp_min . "c\rRH: " . $rowsgetacc->dev_humi_max . "% / " . $rowsgetacc->dev_humi_min . "%\n\nDate: " . $dateResult . "\nActual Temp: " . $getTemp . "c\nActual RH: " . $getHumi . "%"; 
 
-                        //Send the parameters set above with the request
-                        curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $parameters ) );
+                            $ch = curl_init();
+                            $parameters = array(
+                                'apikey' => $apikey, //Your API KEY
+                                'number' => $rowsusr->user_phone,
+                                'message' => $txt,
+                                'sendername' => 'SEMAPHORE'
+                            );
+                            curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
+                            curl_setopt( $ch, CURLOPT_POST, 1 );
 
-                        // Receive response from server
-                        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-                        $output = curl_exec( $ch );
-                        curl_close ($ch);
+                            //Send the parameters set above with the request
+                            curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $parameters ) );
 
-                        //Show the server response
-                        echo $output;
+                            // Receive response from server
+                            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                            $output = curl_exec( $ch );
+                            curl_close ($ch);
+
+                            //Show the server response
+                            echo $output;
+
+                            // next
+                            $sql="  update device_tbl set 
+                                        dev_nextalert2 = '" . strtotime($dateResult) + 1800 . "'
+                                    where id = '" . $getId . "'
+                                "; 
+                            $rsupd=mysqli_query($connection,$sql);
+                        }
+                    }
+                    else
+                    {
+                        // reset
+                        $sql="  update device_tbl set 
+                                    dev_nextalert2 = '0'
+                                where id = '" . $getId . "'
+                            "; 
+                        $rsupd=mysqli_query($connection,$sql);
                     }
                 }
             }
         }
+    }
+
+    // Update Hosting (Image)
+    // ----------------------
+    if ($_GET['mode'] == 'dupdatehostingimage')
+    {
+        // move
+        $image_data = base64_decode($_POST['image']);
+        if(file_put_contents('./images/' . $_POST["devimgname"], $image_data))
+        {
+            // add
+            $sql="insert into deviceimg_tbl
+                    (
+                        dev_id,
+                        devimg_date,
+                        devimg_filename
+                    )
+                values
+                    (
+                        '" . $_POST["devid"] . "',
+                        '" . $dateResult . "',
+                        '" . $_POST["devimgname"] . "'
+                    )
+            "; 
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+        else
+        {
+            if (!$image_data) {
+                // add
+                $sql="insert into deviceimg_tbl
+                        (
+                            dev_id,
+                            devimg_date,
+                            devimg_filename
+                        )
+                    values
+                        (
+                            '" . $_POST["devid"] . "',
+                            '" . $dateResult . "',
+                            'pepe'
+                        )
+                "; 
+                $rsgetacc=mysqli_query($connection,$sql);
+            }
+
+
+            
+        }
+
+        
+    }
+
+    // Update Hosting
+    // ----------------------
+    if ($_GET['mode'] == 'dupdatehosting')
+    {
+        // get
+        $getId = $_GET['did'];
+
+        // clear
+        $sql="delete FROM data_tbl where data_device = '" . $getId . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+
+        // build
+        $xctr = 0;
+        $data = $_POST;
+        $bTemp = array();
+        foreach ($data as $key => $value) {
+            $xctr++;
+            $bTemp[] = "('" . $value["data_device"] . "','" . $value["data_date"] . "','" . $value["data_temp"] . "','" . $value["data_humi"] . "')";
+        }
+        $bNewTemp = implode(",", $bTemp);
+
+        // insert
+        $sql="insert into data_tbl (data_device, data_date, data_temp, data_humi) values " . $bNewTemp; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        echo $xctr;
     }
 
     // Update Device (Monitoring Host - Max Min)
@@ -507,8 +631,6 @@
         echo "dval: " . $_GET['dval'] . " did: " . $_GET['did'];
     }
 
-
-
     // Update Device (Monitoring Host - Max Min)
     // ----------------------
     if ($_GET['mode'] == 'notiftest')
@@ -537,7 +659,7 @@
 
                 $ch = curl_init();
                 $parameters = array(
-                    'apikey' => '', //Your API KEY
+                    'apikey' => $apikey, //Your API KEY
                     'number' => $rowsusr->user_phone,
                     'message' => $txt,
                     'sendername' => 'SEMAPHORE'
