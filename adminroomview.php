@@ -71,7 +71,7 @@
                         <span class=sr-only>Toggle navigation</span>
                         <i class=material-icons>apps</i>
                     </button>
-                    <a class=navbar-brand href=index.html>
+                    <a class=navbar-brand href="#">
                         <img class=main-logo src="assets/images/logo2.png" alt="">
                     </a>
                 </div>
@@ -493,7 +493,6 @@
                 $("#dataTableExample2s").DataTable({
                     dom: 'Bfrtip',
                     buttons: [
-                        'excel'
                     ],
                     ordering: "false",
                     "bSort": false,
