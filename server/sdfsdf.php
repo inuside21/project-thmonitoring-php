@@ -289,24 +289,6 @@
                             )
                     "; 
                 $rsgetacc=mysqli_query($connection,$sql);
-
-                // send to host
-                $remote_image_url = "http://localhost/thserver/server/" . $newName;
-
-                // Get the contents of the image file
-                $image_data = file_get_contents($remote_image_url);
-
-                // Create a cURL request to transfer the image to server B
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, 'https://web-based-monthy.com/server/api.php?mode=dupdatehostingimage'); 
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-                    'image' => base64_encode($image_data),
-                    'devid' => $myDeviceId,
-                    'devimgname' => $newName,
-                ));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $result = curl_exec($ch);
             }
         }
 
@@ -318,6 +300,55 @@
         }
 
         echo $myDeviceId . "," . $getUltrasonic;
+    }
+
+    // Update Hosting
+    // ----------------------
+    if ($_GET['mode'] == 'dupdatehosting')
+    {
+        // login
+        $myDeviceId = "";
+        $sql="select * FROM device_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $myDeviceId = $rowsgetacc->id;
+        }
+
+        // set
+        $url = 'https://web-based-monthy.com/server/api.php?mode=dupdatehosting&did=' . $myDeviceId;
+        $dataLogs = array();
+
+        // get data logs
+        $xctr = 0;
+        $sql="select * FROM data_tbl where data_device = '" . $myDeviceId . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $xctr++;
+            $x = (array)$rowsgetacc;
+            $dataLogs[] = $x;
+        }
+
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataLogs));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // Execute the cURL request
+        $response = curl_exec($ch);
+
+        // Close the cURL session
+        curl_close($ch);
+
+        // Handle the response from the remote server
+        if ($response === false) {
+            echo 'cURL Error: ' . curl_error($ch);
+        } else {
+            echo 'Responses: ' . $response . " xctrA: " . $xctr;
+        }
     }
 
     // Adjust Temp Max Up
@@ -424,17 +455,7 @@
         }
     }
     
-    // test
-    // ----------------------
-    if ($_GET['mode'] == 'testingupload')
-    {
-        $newName = "5BD63245.jpg";
-        $remote_image_url = "http://localhost/thserver/server/" . $newName;
-        $image_data = file_get_contents($remote_image_url);
-        $imageConverted = base64_encode($image_data);
-
-        echo $imageConverted;
-    }
+    
 
 
     /*

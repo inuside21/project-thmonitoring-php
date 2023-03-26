@@ -14,7 +14,7 @@ while True :
     print("LOCAL OK-1")
 
     # get device data from hosting
-    target_url = "https://web-based-monthy.com/server/api.php?mode=devviewdata&did=3"
+    target_url = "https://web-based-monthy.com/server/api.php?mode=devviewdata&did=" + str(deviceId)
     request = urllib.request.Request(target_url)
     response = urllib.request.urlopen(request, timeout=5)
     deviceData = response.read().decode('utf-8')
