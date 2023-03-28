@@ -102,17 +102,11 @@
         $resList = array();
 
         // login
-        $xctr = 1;
         $sql="select * FROM data_tbl order by id desc"; 
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            if ($xctr % 1200 == 0)
-            {
-                $resList[] = $rowsgetacc;
-            }
-
-            $xctr++;
+            $resList[] = $rowsgetacc;
         }
 
         // result
@@ -245,7 +239,7 @@
 
         // check
         $idups = false;
-        $sql="select * FROM data_tbl where data_device = '" . $myDeviceId . "' and data_date = '" . $date->format('Y-m-d H:00:00') . "'"; 
+        $sql="select * FROM data_tbl where data_device = '" . $myDeviceId . "' and data_date = '" . $date->format('Y-m-d H:00') . "'"; 
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
@@ -264,7 +258,7 @@
                     )
                 values
                     (
-                        '" . $date->format('Y-m-d H:00:00') . "',
+                        '" . $date->format('Y-m-d H:00') . "',
                         '" . $myDeviceId . "',
                         '" . $getTemp . "',
                         '" . $getHumi . "'
