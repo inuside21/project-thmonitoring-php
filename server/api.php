@@ -184,12 +184,7 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
-            if ($xctr % 1200 == 0)
-            {
-                $resList[] = $rowsgetacc;
-            }
-            
-            $xctr++;
+            $resList[] = $rowsgetacc;
         }
 
         // result
@@ -206,7 +201,7 @@
         $resList = array();
 
         // login
-        $sql="select * FROM deviceimg_tbl where dev_id = '" . $_GET['did'] . "' order by id desc limit 1000"; 
+        $sql="select * FROM deviceimg_tbl where dev_id = '" . $_GET['did'] . "' order by id desc limit 100"; 
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
@@ -360,7 +355,7 @@
 
         // check
         $idups = false;
-        $sql="select * FROM data_tbl where data_device = '" . $getId . "' and data_date = '" . $date->format('Y-m-d H:00:00') . "'"; 
+        $sql="select * FROM data_tbl where data_device = '" . $getId . "' and data_date = '" . $date->format('Y-m-d H:00') . "'"; 
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
@@ -379,7 +374,7 @@
                     )
                 values
                     (
-                        '" . $date->format('Y-m-d H:00:00') . "',
+                        '" . $date->format('Y-m-d H:00') . "',
                         '" . $getId . "',
                         '" . $getTemp . "',
                         '" . $getHumi . "'

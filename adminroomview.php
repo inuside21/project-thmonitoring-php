@@ -521,8 +521,10 @@
                     "precision": 2,
                     "valueAxes": [{
                             "id": "v1",
-                            "title": "Value",
+                            "title": "Temperature",
                             "position": "left",
+                            "minimum": 0,
+                            "maximum": 100,
                             "autoGridCount": false,
                         }],
                     "graphs": [{
@@ -614,29 +616,23 @@
                             $arrData = array();
 
                             // login
-                            $xctr = 1;
                             $yctr = 1; // 24 data = 24 hrs?
                             $sql="select * FROM data_tbl where data_device = '" . $_GET['id'] . "' order by id desc";  // and data_date = %dselected ate% when select by date
                             $rsgetacc=mysqli_query($connection,$sql);
                             while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
                             {
-                                if ($xctr % 1200 == 0)
+                                if ($yctr <= 24) // adjust this to view more
                                 {
-                                    if ($yctr <= 24) // adjust this to view more
-                                    {
-                                        $arrData[] = '
-                                            {
-                                                "date": "' . $rowsgetacc->data_date . '",
-                                                "market1": ' . $rowsgetacc->data_temp . ',
-                                                "market2": ' . $rowsgetacc->data_humi . '
-                                            },
-                                        ';
-                                    }
-
-                                    $yctr++;
+                                    $arrData[] = '
+                                        {
+                                            "date": "' . $rowsgetacc->data_date . '",
+                                            "market1": ' . $rowsgetacc->data_temp . ',
+                                            "market2": ' . $rowsgetacc->data_humi . '
+                                        },
+                                    ';
                                 }
 
-                                $xctr++;
+                                $yctr++;
                             }
 
                             // chart
