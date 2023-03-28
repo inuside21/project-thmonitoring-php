@@ -358,8 +358,19 @@
             "; 
         $rsgetacc=mysqli_query($connection,$sql);
 
-        // log
-        $sql="  insert into data_tbl 
+        // check
+        $idups = false;
+        $sql="select * FROM data_tbl where data_device = '" . $getId . "' and data_date = '" . $date->format('Y-m-d H:00:00') . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $idups = true;
+        }
+
+        if (!$idups)
+        {
+            // log
+            $sql="  insert into data_tbl 
                     (
                         data_date,
                         data_device,
@@ -368,13 +379,14 @@
                     )
                 values
                     (
-                        '" . $dateResult . "',
+                        '" . $date->format('Y-m-d H:00:00') . "',
                         '" . $getId . "',
                         '" . $getTemp . "',
                         '" . $getHumi . "'
                     )
             "; 
-        $rsgetacc=mysqli_query($connection,$sql);
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
 
         
         // notif
@@ -565,6 +577,24 @@
         $rsgetacc=mysqli_query($connection,$sql);
         echo $xctr;
     }
+
+    // Update Hosting [format date]
+    // ----------------------
+    if ($_GET['mode'] == 'formatme')
+    {
+        $sql="select * FROM data_tbl"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            // get
+            $dataDate = new DateTime($rowsgetacc->data_date);
+            $formatted_date = $dataDate->format('Y-m-d H:00:00');
+
+            $sql="update data_tbl set data_date = '" . $formatted_date . "' where id = '" . $rowsgetacc->id . "'"; 
+            $rsupdate=mysqli_query($connection,$sql);
+        }
+    }
+
 
     // Update Device (Monitoring Host - Max Min)
     // ----------------------
