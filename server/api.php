@@ -243,23 +243,35 @@
             "; 
         $rsgetacc=mysqli_query($connection,$sql);
 
-        // log
-        $sql="  insert into data_tbl 
+        // check
+        $idups = false;
+        $sql="select * FROM data_tbl where data_device = '" . $myDeviceId . "' and data_date = '" . $date->format('Y-m-d H:00:00') . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            $idups = true;
+        }
+
+        if (!$idups)
+        {
+            // log
+            $sql="  insert into data_tbl 
                     (
-                        data_device,
                         data_date,
+                        data_device,
                         data_temp,
                         data_humi
                     )
                 values
                     (
-                        '" . $myDeviceId ."',
-                        '" . $dateResult . "',
+                        '" . $date->format('Y-m-d H:00:00') . "',
+                        '" . $myDeviceId . "',
                         '" . $getTemp . "',
                         '" . $getHumi . "'
                     )
             "; 
-        $rsgetacc=mysqli_query($connection,$sql);
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
 
         // ultrasonic
         if ((int)$getUltrasonic > 300 && (int)$getUltrasonic != 0)
