@@ -10,7 +10,7 @@
     }
 
     // sms
-    $apikey = "cb74d2b59aebce2fe78f5d359d270dbb";
+    $apikey = "da6f4cdef0d815ced3f570d54cc6a63f";
 
 
     /*
@@ -26,7 +26,7 @@
         $resData = JSONGet();
 
         // login
-        $sql="select * FROM user_tbl where binary user_uname = '" . $_POST['uuname'] . "' and binary user_pword = '" . $_POST['uuname'] . "'"; 
+        $sql="select * FROM user_tbl where binary user_uname = '" . $_POST['uuname'] . "' and binary user_pword = '" . $_POST['upword'] . "'"; 
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
@@ -538,12 +538,7 @@
                 "; 
                 $rsgetacc=mysqli_query($connection,$sql);
             }
-
-
-            
         }
-
-        
     }
 
     // Update Hosting
@@ -588,6 +583,33 @@
             $sql="update data_tbl set data_date = '" . $formatted_date . "' where id = '" . $rowsgetacc->id . "'"; 
             $rsupdate=mysqli_query($connection,$sql);
         }
+    }
+
+    // Check Reboot
+    // ----------------------
+    if ($_GET['mode'] == 'devrestart')
+    {
+        $sql="select * FROM device_tbl where id = '" . $_GET['id'] . "'"; 
+        $rsgetacc=mysqli_query($connection,$sql);
+        while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
+        {
+            // clear
+            $sql="update device_tbl set dev_isreboot = 0 where id = '" . $_GET['id'] . "'"; 
+            $rsupdate=mysqli_query($connection,$sql);
+
+            echo $rowsgetacc->dev_isreboot;
+        }
+    }
+
+    // Update Reboot
+    // ----------------------
+    if ($_GET['mode'] == 'devrestartstart')
+    {
+        // clear
+        $sql="update device_tbl set dev_isreboot = 1 where id = '" . $_GET['id'] . "'"; 
+        $rsupdate=mysqli_query($connection,$sql);
+
+        JSONSet("ok", "", "");
     }
 
 

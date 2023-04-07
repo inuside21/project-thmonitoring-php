@@ -147,9 +147,9 @@
                                 </div>
                                 <div class=n2Status>
                                     <div id="fButton">
+                                        <a id="fReboot" href="#"><span class="ti-alert"></span> Reboot</a> &nbsp&nbsp&nbsp
                                         <a id="fSubmit" href="#"><span class="ti-save"></span> Save</a> &nbsp&nbsp&nbsp
                                         <a id="fDelete" href="#"><span class="ti-trash"></span> Delete</a> &nbsp&nbsp&nbsp
-                                        <a id="fClear" href="#"><span class="ti-reload"></span> Clear</a>
                                     </div>
                                 </div>
                             </div>
@@ -318,6 +318,69 @@
                     each_bar_width = $(this).attr('aria-valuenow');
                     $(this).width(each_bar_width + '%');
                 });     
+
+                // Press - Reboot
+                $('#fReboot').click(function(e) {
+                    // check
+                    if (userData.user_access == "0")
+                    {
+                        alert("Only admins are allowed to reboot device.")
+                        return;
+                    }
+
+                    swal(
+                        {
+                            title: "Are you sure?",
+                            text: "Pressing the Proceed button will reboot the device.",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3C6F18",
+                            confirmButtonText: "Proceed",
+                            closeOnConfirm: false
+                        },
+                        function() {
+                            // form
+                            $.ajax({
+                                type: "POST",
+                                url: "server/api.php?mode=devrestartstart&id=" + <?php echo $_GET['id']; ?>,
+                                data: {},
+                                beforeSend: function() {
+                                    // button
+                                    $('#fButton').toggle();
+                                },
+                                success: function(data) {
+                                    // button
+                                    $('#fButton').toggle();
+
+                                    // result
+                                    const result = JSON.parse(data);
+
+                                    // check
+                                    if (result.status == "ok")
+                                    {
+                                        //message
+                                        swal("Rebooted!", "Please wait for the device to reboot", "success");
+                                        setTimeout(() => {
+                                            location.reload(true);
+                                        }, 1000);
+                                    }
+                                    else
+                                    {
+                                        // message
+                                        swal("Error!", result.message, "error");
+                                    }
+                                },
+                                error: function(data) {
+                                    // button
+                                    $('#fButton').toggle();
+
+                                    // message
+                                    swal("Error!", "Something went wrong. Please try again.", "error");
+                                }
+                            });
+                        }
+                    );
+                });
 
                 // Press - Submit
                 $('#fSubmit').click(function(e) {
