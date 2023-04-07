@@ -2,6 +2,7 @@ import time
 import datetime     
 import urllib.request
 from urllib.request import urlopen
+import os
 
 while True :
   time.sleep(1)
@@ -32,6 +33,14 @@ while True :
     request = urllib.request.Request(target_url)
     response = urllib.request.urlopen(request, timeout=5)
     print("LOCAL OK-3")
+
+    # wifi
+    target_url = "https://web-based-monthy.com/server/api.php?mode=devrestart&id="  + str(deviceId)
+    request = urllib.request.Request(target_url)
+    response = urllib.request.urlopen(request, timeout=5)
+    deviceData = response.read().decode('utf-8')
+    if deviceData == "1" :
+      os.system("sudo reboot")
   except Exception as e:
     print(e)
     try :

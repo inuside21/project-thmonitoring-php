@@ -233,7 +233,7 @@
                     dev_lastupdate = '" . $getLastUpdate . "',
                     dev_temp = '" . $getTemp . "',
                     dev_humi = '" . $getHumi . "',
-                    dev_cmd = '" .  $myDeviceId. "'
+                    dev_cmd = '" .  $getUltrasonic. "'
             "; 
         $rsgetacc=mysqli_query($connection,$sql);
 
@@ -268,7 +268,7 @@
         }
 
         // ultrasonic
-        if ((int)$getUltrasonic > 300 && (int)$getUltrasonic != 0)
+        if ((int)$getUltrasonic > 780)
         {
             $newName = GUID() . ".jpg";
             $retryImage = 0;
