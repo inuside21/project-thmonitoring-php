@@ -32,6 +32,17 @@
     $rsgetacc=mysqli_query($connection,$sql);
     while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
     {
+        // disconnect?
+        {
+            $getTimeDevice = (int)$rowsgetacc->dev_lastupdate + 60;
+            $getTimeToday = (int)strtotime($dateResult);
+
+            if ($getTimeDevice <= $getTimeToday)
+            {
+                continue;
+            }
+        }
+    
         // sms
         $sql="select * FROM user_tbl where user_update = '1'"; 
         $rsusr=mysqli_query($connection,$sql);

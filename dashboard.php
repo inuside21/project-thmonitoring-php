@@ -256,6 +256,12 @@
                                     $('#cPanelDev' + item.id).removeClass("panel-bd panel-danger panel-success").addClass("panel-danger");
                                 }
 
+                                // get disconnection
+                                if (parseInt(item.devtime0) <= parseInt(item.devtime1))
+                                {
+                                    $('#cPanelDev' + item.id).removeClass("panel-bd panel-danger panel-success").addClass("panel-bd");
+                                }
+
                                 // value
                                 $('#cPanelDevName' + item.id).text(item.dev_name);
                                 $('#cPanelDevTemp' + item.id).text(item.dev_temp);

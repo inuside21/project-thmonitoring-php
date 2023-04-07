@@ -259,6 +259,14 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
+            // disconnected?
+            $getTimeDevice = (int)$rowsgetacc->dev_lastupdate + 60;
+            $getTimeToday = (int)strtotime($dateResult);
+
+            $rowsgetacc->devtime0 = $getTimeDevice;
+            $rowsgetacc->devtime1 = $getTimeToday;
+
+            // output
             $resList[] = $rowsgetacc;
         }
 
