@@ -72,6 +72,19 @@
         $rsgetacc=mysqli_query($connection,$sql);
         while ($rowsgetacc = mysqli_fetch_object($rsgetacc))
         {
+            // notifs
+            {
+                $notifsArray = array();
+                $sql="select * FROM notif_user where user_id = '" . $rowsgetacc->id . "'"; 
+                $rsgetnotifs=mysqli_query($connection,$sql);
+                while ($rowsgetnotifs = mysqli_fetch_object($rsgetnotifs))
+                {
+                    $notifsArray[] = $rowsgetnotifs;
+                }
+                $rowsgetacc->notifs = $notifsArray;
+            }
+
+            // output
             JSONSet("ok", "", "", $rowsgetacc);
         }
 
@@ -118,15 +131,44 @@
                 )
             values
                 (
-                    '" . $_POST['rUname'] . "',
-                    '" . $_POST['rPass'] . "',
-                    '" . $_POST['rFname'] . "',
-                    '" . $_POST['rContact'] . "',
-                    '" . $_POST['rEmail'] . "',
-                    '" . $_POST['rAccess'] . "',
-                    '" . $_POST['rNotifs'] . "'
+                    '" . $resData->rUname . "',
+                    '" . $resData->rPass . "',
+                    '" . $resData->rFname . "',
+                    '" . $resData->rContact . "',
+                    '" . $resData->rEmail . "',
+                    '" . $resData->rAccess . "',
+                    '" . $resData->rNotifs . "'
                 )"; 
         $rsgetacc=mysqli_query($connection,$sql);
+        $getUserId = mysqli_insert_id($connection);
+
+        // notifs
+        if (isset($resData->{'rDeviceId[]'}))
+        {
+            $devices = $resData->{'rDeviceId[]'};
+
+            // check
+            for ($i = 0; $i < count($devices); $i++)
+            {
+                // check exist
+                if (!isset($resData->{"rDevice-" . $devices[$i]}))
+                {
+                    continue;
+                }
+
+                $sql="insert into notif_user
+                        (
+                            user_id,
+                            dev_id
+                        )
+                    values
+                        (
+                            '" . $getUserId . "',
+                            '" . $devices[$i] . "'
+                        )"; 
+                $rsgetacc=mysqli_query($connection,$sql);
+            }
+        }
 
         // result
         JSONSet("ok", "Success!", "New User added successfully.");
@@ -140,15 +182,49 @@
 
         // login
         $sql="update user_tbl set
-                    user_uname = '" . $_POST['rUname'] . "',
-                    user_pword = '" . $_POST['rPass'] . "',
-                    user_fname = '" . $_POST['rFname'] . "',
-                    user_phone = '" . $_POST['rContact'] . "',
-                    user_email = '" . $_POST['rEmail'] . "',
-                    user_access = '" . $_POST['rAccess'] . "',
-                    user_update = '" . $_POST['rNotifs'] . "'
-            where id = '" . $_POST['rId'] . "'"; 
+                    user_uname = '" . $resData->rUname . "',
+                    user_pword = '" . $resData->rPass . "',
+                    user_fname = '" . $resData->rFname . "',
+                    user_phone = '" . $resData->rContact . "',
+                    user_email = '" . $resData->rEmail . "',
+                    user_access = '" . $resData->rAccess . "',
+                    user_update = '" . $resData->rNotifs . "'
+            where id = '" . $resData->rId . "'"; 
         $rsgetacc=mysqli_query($connection,$sql);
+
+        // remove notifs
+        {
+            $sql = "delete from notif_user where user_id = '" . $resData->rId . "'";
+            $rsgetacc=mysqli_query($connection,$sql);
+        }
+
+        // notifs
+        if (isset($resData->{'rDeviceId[]'}))
+        {
+            $devices = $resData->{'rDeviceId[]'};
+
+            // check
+            for ($i = 0; $i < count($devices); $i++)
+            {
+                // check exist
+                if (!isset($resData->{"rDevice-" . $devices[$i]}))
+                {
+                    continue;
+                }
+
+                $sql="insert into notif_user
+                        (
+                            user_id,
+                            dev_id
+                        )
+                    values
+                        (
+                            '" . $resData->rId . "',
+                            '" . $devices[$i] . "'
+                        )"; 
+                $rsgetacc=mysqli_query($connection,$sql);
+            }
+        }
 
         // result
         JSONSet("ok", "Success!", "User details updated successfully.");
@@ -402,101 +478,107 @@
             $rsusr=mysqli_query($connection,$sql);
             while ($rowsusr = mysqli_fetch_object($rsusr))
             {
-                // email
+                // check if notifs active
+                $sql="select * FROM notif_user where user_id = '" . $rowsusr->id . "' and dev_id = '" . $rowsgetacc->id . "'"; 
+                $rsnotifsx=mysqli_query($connection,$sql);
+                while ($rowsnotifsx = mysqli_fetch_object($rsnotifsx))
                 {
-                    if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+                    // email
                     {
-                        // check alert
-                        if ((int)$rowsgetacc->dev_nextalert <= strtotime($dateResult))
+                        if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
                         {
-                            $to = $rowsusr->user_email;
-                            $subject = "Web-Based Monitoring System";
-                            $txt = "
-                                        <b>URGENT!</b> <br>
-                                        Temperature and Humidity Monitoring System has detected a limit extent on " . $rowsgetacc->dev_name . ". <br><br>
-                                        
-                                        Values Set: <br>
-                                        Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_min . " Min <br>
-                                        Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
-                                        
-                                        Date and Time: " . $dateResult . " <br>
-                                        Actual Room Temperature: " . $getTemp . " c<br>
-                                        Actual Room Humidity: " . $getHumi . " %<br><br>
-                                        
-                                        Click the link for more information: <br>
-                                        https://web-based-monthy.com <br>
-                                        admin@web-based-monthy.com
-                            ";        
-                            $headers = "MIME-Version: 1.0\r\n";
-                            $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                            $headers .= "From: admin@web-based-monthy.com";
-                            mail($to,$subject,$txt,$headers);
+                            // check alert
+                            if ((int)$rowsgetacc->dev_nextalert <= strtotime($dateResult))
+                            {
+                                $to = $rowsusr->user_email;
+                                $subject = "Web-Based Monitoring System";
+                                $txt = "
+                                            <b>URGENT!</b> <br>
+                                            Temperature and Humidity Monitoring System has detected a limit extent on " . $rowsgetacc->dev_name . ". <br><br>
+                                            
+                                            Values Set: <br>
+                                            Temperature: " . $rowsgetacc->dev_temp_max . " Max  / " . $rowsgetacc->dev_temp_min . " Min <br>
+                                            Humidity: " . $rowsgetacc->dev_humi_max . " Max  / " . $rowsgetacc->dev_humi_min . " Min <br><br>
+                                            
+                                            Date and Time: " . $dateResult . " <br>
+                                            Actual Room Temperature: " . $getTemp . " c<br>
+                                            Actual Room Humidity: " . $getHumi . " %<br><br>
+                                            
+                                            Click the link for more information: <br>
+                                            https://web-based-monthy.com <br>
+                                            admin@web-based-monthy.com
+                                ";        
+                                $headers = "MIME-Version: 1.0\r\n";
+                                $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                                $headers .= "From: admin@web-based-monthy.com";
+                                mail($to,$subject,$txt,$headers);
 
+                                // next
+                                $sql="  update device_tbl set 
+                                            dev_nextalert = '" . strtotime($dateResult) + 300 . "'
+                                        where id = '" . $getId . "'
+                                    "; 
+                                $rsupd=mysqli_query($connection,$sql);
+                            }
+                        }
+                        else
+                        {
                             // next
                             $sql="  update device_tbl set 
-                                        dev_nextalert = '" . strtotime($dateResult) + 300 . "'
+                                        dev_nextalert = '0'
                                     where id = '" . $getId . "'
                                 "; 
                             $rsupd=mysqli_query($connection,$sql);
                         }
                     }
-                    else
-                    {
-                        // next
-                        $sql="  update device_tbl set 
-                                    dev_nextalert = '0'
-                                where id = '" . $getId . "'
-                            "; 
-                        $rsupd=mysqli_query($connection,$sql);
-                    }
-                }
 
-                // sms
-                {
-                    if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
+                    // sms
                     {
-                        // check alert
-                        if ((int)$rowsgetacc->dev_nextalert2 <= strtotime($dateResult))
+                        if ((float)$rowsgetacc->dev_temp_max <= (float)$getTemp || (float)$rowsgetacc->dev_temp_min >= (float)$getTemp || (float)$rowsgetacc->dev_humi_max <= (float)$getHumi || (float)$rowsgetacc->dev_humi_min >= (float)$getHumi)
                         {
-                            $txt = "WBMONTHY - URGENT\n" . $rowsgetacc->dev_name . "!\n\nSet:\nTemp: " . $rowsgetacc->dev_temp_max . "c / " . $rowsgetacc->dev_temp_min . "c\rRH: " . $rowsgetacc->dev_humi_max . "% / " . $rowsgetacc->dev_humi_min . "%\n\nDate: " . $dateResult . "\nActual Temp: " . $getTemp . "c\nActual RH: " . $getHumi . "%"; 
+                            // check alert
+                            if ((int)$rowsgetacc->dev_nextalert2 <= strtotime($dateResult))
+                            {
+                                $txt = "WBMONTHY - URGENT\n" . $rowsgetacc->dev_name . "!\n\nSet:\nTemp: " . $rowsgetacc->dev_temp_max . "c / " . $rowsgetacc->dev_temp_min . "c\rRH: " . $rowsgetacc->dev_humi_max . "% / " . $rowsgetacc->dev_humi_min . "%\n\nDate: " . $dateResult . "\nActual Temp: " . $getTemp . "c\nActual RH: " . $getHumi . "%"; 
 
-                            $ch = curl_init();
-                            $parameters = array(
-                                'apikey' => $apikey, //Your API KEY
-                                'number' => $rowsusr->user_phone,
-                                'message' => $txt,
-                                'sendername' => 'SEMAPHORE'
-                            );
-                            curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
-                            curl_setopt( $ch, CURLOPT_POST, 1 );
+                                $ch = curl_init();
+                                $parameters = array(
+                                    'apikey' => $apikey, //Your API KEY
+                                    'number' => $rowsusr->user_phone,
+                                    'message' => $txt,
+                                    'sendername' => 'SEMAPHORE'
+                                );
+                                curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
+                                curl_setopt( $ch, CURLOPT_POST, 1 );
 
-                            //Send the parameters set above with the request
-                            curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $parameters ) );
+                                //Send the parameters set above with the request
+                                curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $parameters ) );
 
-                            // Receive response from server
-                            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-                            $output = curl_exec( $ch );
-                            curl_close ($ch);
+                                // Receive response from server
+                                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                                $output = curl_exec( $ch );
+                                curl_close ($ch);
 
-                            //Show the server response
-                            echo $output;
+                                //Show the server response
+                                echo $output;
 
-                            // next
+                                // next
+                                $sql="  update device_tbl set 
+                                            dev_nextalert2 = '" . strtotime($dateResult) + 1800 . "'
+                                        where id = '" . $getId . "'
+                                    "; 
+                                $rsupd=mysqli_query($connection,$sql);
+                            }
+                        }
+                        else
+                        {
+                            // reset
                             $sql="  update device_tbl set 
-                                        dev_nextalert2 = '" . strtotime($dateResult) + 1800 . "'
+                                        dev_nextalert2 = '0'
                                     where id = '" . $getId . "'
                                 "; 
                             $rsupd=mysqli_query($connection,$sql);
                         }
-                    }
-                    else
-                    {
-                        // reset
-                        $sql="  update device_tbl set 
-                                    dev_nextalert2 = '0'
-                                where id = '" . $getId . "'
-                            "; 
-                        $rsupd=mysqli_query($connection,$sql);
                     }
                 }
             }

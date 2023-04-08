@@ -9,22 +9,21 @@
         
     }
     
-    /*
     // Fetch
     // =============================
     {
-        // Fetch Building
+        // Fetch Device
         // --------------------------
         {
-            $rowCabinet = array();
-            $sql = "select * from cabinet_tbl";
-            $rsCabinet = mysqli_query($connection, $sql);
-            $rsCabinetRowCount = mysqli_num_rows($rsCabinet);
-            if ($rsCabinetRowCount > 0)
+            $rowDevice = array();
+            $sql = "select * from device_tbl";
+            $rsDevice = mysqli_query($connection, $sql);
+            $rsDeviceCount = mysqli_num_rows($rsDevice);
+            if ($rsDeviceCount > 0)
             {
-                while ($rowsCabinet = mysqli_fetch_object($rsCabinet))
+                while ($rowsDevice = mysqli_fetch_object($rsDevice))
                 {
-                    $rowCabinet[] = $rowsCabinet;
+                    $rowDevice[] = $rowsDevice;
                 }
             }
             else
@@ -35,7 +34,6 @@
             }
         }
     }
-    */
 ?>
 
 <!DOCTYPE html>
@@ -129,24 +127,25 @@
                     </div>
                 </div>
 
-                <div class=row>
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        
+                <form id="fInfo" enctype="multipart/form-data">
 
-                        <div class="panel panel-bd">
-                            <div class="panel-heading">
-                                <div class="panel-title">
-                                    <h4>User Information</h4>
-                                </div>
-                                <div class=n2Status>
-                                    <div id="fButton">
-                                        <a id="fSubmit" href="#"><span class="ti-save"></span> Save</a> &nbsp&nbsp&nbsp
-                                        <a id="fClear" href="#"><span class="ti-reload"></span> Clear</a>
+                    <div class=row>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                            
+
+                            <div class="panel panel-bd">
+                                <div class="panel-heading">
+                                    <div class="panel-title">
+                                        <h4>User Information</h4>
+                                    </div>
+                                    <div class=n2Status>
+                                        <div id="fButton">
+                                            <a id="fSubmit" href="#"><span class="ti-save"></span> Save</a> &nbsp&nbsp&nbsp
+                                            <a id="fClear" href="#"><span class="ti-reload"></span> Clear</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="panel-body">
-                                <form id="fInfo" action="asdsad.php" method="post" enctype="multipart/form-data">
+                                <div class="panel-body">
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12 p-l-30 p-r-30">
                                             <h4 class="text-center">Information</h4>
@@ -205,18 +204,61 @@
                                                         <option value="1">Yes</option>
                                                     </select>
                                                 </div>
-                                            </div>>
+                                            </div>
                                             
                                             <div class="form-group row"></div>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
+
+
                         </div>
 
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                            
 
+                            <div class="panel panel-bd">
+                                <div class="panel-heading">
+                                    <div class="panel-title">
+                                        <h4>Device Alert Notification</h4>
+                                    </div>
+                                    <div class=n2Status>
+                                        
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                                            <?php
+                                                foreach ($rowDevice as $dDevice)
+                                                {
+                                            ?>
+                                                    <div class="form-group row">
+                                                        <div class="skin-flat col-sm-12">
+                                                            <div class="i-check" style="margin-left: 20px;">
+                                                                <input type="hidden" id="rDeviceId" name="rDeviceId[]" value="<?php echo $dDevice->id; ?>">
+                                                                <input type="checkbox" id="rDevice-<?php echo $dDevice->id; ?>" name="rDevice-<?php echo $dDevice->id; ?>" value="<?php echo $dDevice->id; ?>">
+                                                                <label for="rDevice-<?php echo $dDevice->id; ?>" style="margin-left: 20px;"><?php echo $dDevice->dev_name; ?></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            <?php
+                                                }
+                                            ?>
+                                            
+                                            <div class="form-group row"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
                     </div>
-                </div>
+
+                </form>
             </div>
         </div>
         <?php
@@ -259,10 +301,26 @@
                         },
                         function() {
                             // form
+                            var formData = {};
+                            $.each($('#fInfo').serializeArray(), function() {
+                                var key = this.name;
+                                var value = this.value;
+                                if (formData[key] !== undefined) {
+                                    if (!Array.isArray(formData[key])) {
+                                        formData[key] = [formData[key]];
+                                    }
+                                    formData[key].push(value);
+                                } else {
+                                    formData[key] = value;
+                                }
+                            });
+
                             $.ajax({
                                 type: "POST",
+                                contentType: false,
+                                processData: false,
                                 url: "server/api.php?mode=useradd",
-                                data: $("#fInfo").serialize(),
+                                data: JSON.stringify(formData),
                                 beforeSend: function() {
                                     // button
                                     $('#fButton').toggle();
@@ -343,6 +401,13 @@
 
                         // display
                         $('#userFname').text(result.data.user_fname.toUpperCase());
+
+                        /*
+                        // notifs
+                        result.data.notifs.forEach(element => {
+                            $('#rDevice-' + element.dev_id).prop("checked", true);
+                        });
+                        */
 
                         // check admin
                         if (result.data.user_access == "0")

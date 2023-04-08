@@ -28,6 +28,8 @@
     $contentPageCSS = '
         <link rel="shortcut icon" href="assets/images/logo.png" type="image/x-icon">
         <link href="assets/dist/css/base.css" rel=stylesheet type="text/css"/>
+        <link href="assets/plugins/icheck/skins/all.css" rel="stylesheet" type="text/css"/>
+        <link href="assets/plugins/bootstrap-toggle/bootstrap-toggle.min.css" rel="stylesheet" type="text/css"/>
         <link href="assets/plugins/toastr/toastr.min.css" rel=stylesheet type="text/css"/>
         <link href="assets/plugins/emojionearea/emojionearea.min.css" rel=stylesheet type="text/css"/>
         <link href="assets/plugins/monthly/monthly.min.css" rel=stylesheet type="text/css"/>
@@ -46,6 +48,9 @@
         <script src="assets/plugins/jquery-ui-1.12.1/jquery-ui.min.js"></script>
         <script src="assets/bootstrap/js/bootstrap.min.js"></script>
         <script src="assets/plugins/metisMenu/metisMenu.min.js"></script>
+        <script src="assets/plugins/icheck/icheck.min.js"></script>
+        <script src="assets/plugins/bootstrap-toggle/bootstrap-toggle.min.js"></script>
+        <script src="assets/plugins/bootstrap-toggle/toggle-active.js"></script>
         <script src="assets/plugins/lobipanel/lobipanel.min.js"></script>
         <script src="assets/plugins/animsition/js/animsition.min.js"></script>
         <script src="assets/plugins/bootsnav/js/bootsnav.min.js"></script>
